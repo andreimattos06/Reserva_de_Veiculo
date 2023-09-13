@@ -1,8 +1,49 @@
+'use client'
+
 import Sidebar from '../components/sidebar.js';
 import ItemCalendar from '../components/itemcalendar.js';
+import { useEffect, useState } from 'react';
+
+
+function daysInMonth(month, year) {
+    return new Date(year, (month + 1), 0).getDate();
+}
+
 
 
 export default function Principal() {
+    const [calendario, setCalendario] = useState([])
+    const [ano, setAno] = useState(new Date().getFullYear())
+    const [mes, setMes] = useState(new Date().getMonth())
+    const [primeiro_dia, setPrimeiroDia] = useState(0)
+
+    //console.log(new Date(data_hoje.getFullYear(), 11, 1).getDay())
+
+
+    /** Use Effect inicial,para iniciar informações necessárias na execução */
+    useEffect(() => {
+        setPrimeiroDia(new Date(ano, mes, 1).getDay())
+
+    }, [])
+
+    //Use Effect usado para atualizar o primeiro dia o mês quando houver mudança na data.
+    useEffect(() => {
+        setPrimeiroDia(new Date(ano, mes, 1).getDay())
+    },[ano, mes])
+
+    //Use Effect usado para atualizar o calendário quando obtivermos o dia da semana em que o mês inicia.
+    useEffect(() => {
+        let array = []
+
+        for (let i = (primeiro_dia * -1 + 1); i <= (daysInMonth(mes, ano)); i++) {
+            array.push(i)
+
+        }
+        setCalendario(array)
+
+    }, [primeiro_dia])
+
+
     return (
         <>
             <div className="flex flex-row">
@@ -15,49 +56,17 @@ export default function Principal() {
 
                     </div>
                     <div className='w-full grid grid-cols-7 gap-3'>
-                        <ItemCalendar dia={1} diasemana="Seg"/>
-                        <ItemCalendar dia={2} diasemana="Ter"/>
-                        <ItemCalendar dia={3} diasemana="Qua"/>
-                        <ItemCalendar dia={4} diasemana="Qui"/>
-                        <ItemCalendar dia={5} diasemana="Sex"/>
-                        <ItemCalendar dia={6} diasemana="Sab"/>
-                        <ItemCalendar dia={7} diasemana="Dom"/>
+                        {calendario.map((e, index) => {
+                            return (
+                                <ItemCalendar dia={e} index={index} />
+                            )
+                        })}
 
-                        <ItemCalendar dia={8} diasemana="Seg"/>
-                        <ItemCalendar dia={9} diasemana="Ter"/>
-                        <ItemCalendar dia={10} diasemana="Qua"/>
-                        <ItemCalendar dia={11} diasemana="Qui"/>
-                        <ItemCalendar dia={12} diasemana="Sex"/>
-                        <ItemCalendar dia={13} diasemana="Sab"/>
-                        <ItemCalendar dia={14} diasemana="Dom"/>
-
-                        <ItemCalendar dia={15} diasemana="Seg"/>
-                        <ItemCalendar dia={16} diasemana="Ter"/>
-                        <ItemCalendar dia={17} diasemana="Qua"/>
-                        <ItemCalendar dia={18} diasemana="Qui"/>
-                        <ItemCalendar dia={19} diasemana="Sex"/>
-                        <ItemCalendar dia={20} diasemana="Sab"/>
-                        <ItemCalendar dia={21} diasemana="Dom"/>
-
-                        <ItemCalendar dia={1} diasemana="Seg"/>
-                        <ItemCalendar dia={2} diasemana="Ter"/>
-                        <ItemCalendar dia={3} diasemana="Qua"/>
-                        <ItemCalendar dia={4} diasemana="Qui"/>
-                        <ItemCalendar dia={5} diasemana="Sex"/>
-                        <ItemCalendar dia={6} diasemana="Sab"/>
-                        <ItemCalendar dia={7} diasemana="Dom"/>
-
-                        <ItemCalendar dia={1} diasemana="Seg"/>
-                        <ItemCalendar dia={2} diasemana="Ter"/>
-                        <ItemCalendar dia={3} diasemana="Qua"/>
-                        <ItemCalendar dia={4} diasemana="Qui"/>
-                        <ItemCalendar dia={5} diasemana="Sex"/>
-                        <ItemCalendar dia={6} diasemana="Sab"/>
-                        <ItemCalendar dia={7} diasemana="Dom"/>
                     </div>
-                    
+
 
                 </div>
+                <button onClick={() => {setMes(mes-1)}}>aaaaaa</button>
             </div>
         </>
     )
