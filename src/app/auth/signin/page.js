@@ -1,27 +1,22 @@
 'use client'
 
-import Input from './components/input.js';
+import Input from '../../components/input.js';
 import { Key, User, SignIn } from '@phosphor-icons/react'
-import Button from './components/button.js';
+import Button from '../../components/button.js';
 import Link from 'next/link.js';
 import { signIn } from "next-auth/react"
-import { useState } from 'react';
-import { useSession } from "next-auth/react"
+import { useEffect, useState } from 'react';
 
 
 export default function Home() {
 
-  const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
 
-  if (status === "authenticated") {
-    console.log("autenticado")
-  }
-  else{
-    console.log("não autenticado")
-  }
+  useEffect(() => {
+    console.log(senha, email)
 
+  },[email, senha])
 
   return (
     <>
@@ -40,7 +35,7 @@ export default function Home() {
             <a className='text-sm font-normal'>Esqueceu a senha?</a>
 
             <Link href={"/principal"}>
-              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => signIn("credentials", {email, senha, callbackUrl: '/principal'})}/>
+              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => signIn("credentials", {email, senha, callbackUrl: '/'})}/>
             </Link>
 
           </div>

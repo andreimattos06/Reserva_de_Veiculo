@@ -29,7 +29,7 @@ export default function Principal() {
     //Use Effect usado para atualizar o primeiro dia o mês quando houver mudança na data.
     useEffect(() => {
         setPrimeiroDia(new Date(ano, mes, 1).getDay())
-    },[ano, mes])
+    }, [ano, mes])
 
     //Use Effect usado para atualizar o calendário quando obtivermos o dia da semana em que o mês inicia.
     useEffect(() => {
@@ -49,24 +49,26 @@ export default function Principal() {
             <div className="flex flex-row">
                 <Sidebar />
                 <div className='flex flex-col my-16 mx-16 w-4/5 gap-10'>
-                    <div className='text-5xl text-white font-bold'>
-                        Calendário
-                    </div>
                     <div className='self-end border-2'>
 
                     </div>
                     <div className='w-full grid grid-cols-7 gap-3'>
                         {calendario.map((e, index) => {
-                            return (
-                                <ItemCalendar dia={e} index={index} />
-                            )
+                            if (e <= 0) {
+                                return <div/>
+                            }
+                            else {
+                                return (
+                                    <ItemCalendar dia={e} index={index} />
+                                )
+                            }
                         })}
 
                     </div>
 
 
                 </div>
-                <button onClick={() => {setMes(mes-1)}}>aaaaaa</button>
+                <button onClick={() => { setMes(mes - 1) }}>aaaaaa</button>
             </div>
         </>
     )

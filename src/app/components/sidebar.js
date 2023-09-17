@@ -2,8 +2,9 @@
 
 import * as Avatar from '@radix-ui/react-avatar';
 import ButtonSide from './buttonside.js'
-import { House, UserCircleGear, CarSimple, UsersFour } from '@phosphor-icons/react'
+import { House, UserCircleGear, CarSimple, UsersFour, CalendarBlank, SignOut } from '@phosphor-icons/react'
 import Link from 'next/link.js';
+import { signOut } from "next-auth/react"
 
 export default function Sidebar(props) {
     return (
@@ -27,9 +28,13 @@ export default function Sidebar(props) {
                         <Link href="/">
                             <ButtonSide texto="Página Principal" icon={<House size={22} />} />
                         </Link>
+                        <Link href="/principal">
+                            <ButtonSide texto="Calendário" icon={<CalendarBlank size={22} />} />
+                        </Link>
                         <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
                         <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
                         <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
+                        <ButtonSide texto="Logout" onClick={() => signOut({ callbackUrl: "/" })} icon={<SignOut size={22}/>} />
                     </div>
 
 
