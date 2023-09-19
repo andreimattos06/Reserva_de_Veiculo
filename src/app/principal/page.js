@@ -3,6 +3,8 @@
 import Sidebar from '../components/sidebar.js';
 import ItemCalendar from '../components/itemcalendar.js';
 import { useEffect, useState } from 'react';
+import { useSession } from "next-auth/react"
+import { redirect } from 'next/navigation'
 
 
 function daysInMonth(month, year) {
@@ -12,6 +14,12 @@ function daysInMonth(month, year) {
 
 
 export default function Principal() {
+    const { data: session, status } = useSession()
+
+    if (status === "unauthenticated") {
+        redirect("/", "replace")
+      }
+
     const [calendario, setCalendario] = useState([])
     const [ano, setAno] = useState(new Date().getFullYear())
     const [mes, setMes] = useState(new Date().getMonth())
@@ -59,7 +67,7 @@ export default function Principal() {
                             }
                             else {
                                 return (
-                                    <ItemCalendar dia={e} index={index} />
+                                    <ItemCalendar dia={e} index={index}/>
                                 )
                             }
                         })}

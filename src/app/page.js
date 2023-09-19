@@ -7,6 +7,7 @@ import Link from 'next/link.js';
 import { signIn } from "next-auth/react"
 import { useState } from 'react';
 import { useSession } from "next-auth/react"
+import { redirect } from 'next/navigation'
 
 
 export default function Home() {
@@ -14,12 +15,10 @@ export default function Home() {
   const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
+  const [errada, setErrada] = useState(false)
 
   if (status === "authenticated") {
-    console.log("autenticado")
-  }
-  else{
-    console.log("não autenticado")
+    redirect("/principal", "replace")
   }
 
 
@@ -32,15 +31,20 @@ export default function Home() {
               <text>Dados do Login</text>
             </div>
             <h1>E mail:</h1>
-            <Input icon={<User size={24} />} onChange={(target) => setEmail(target.target.value)}/>
+            <Input icon={<User size={24} />} onChange={(target) => setEmail(target.target.value)} />
 
             <h1 className='pt-5'>Senha:</h1>
-            <Input icon={<Key size={24} />} onChange={(target) => setSenha(target.target.value)}/>
+            <Input icon={<Key size={24} />} onChange={(target) => setSenha(target.target.value)} />
 
             <a className='text-sm font-normal'>Esqueceu a senha?</a>
 
+            {errada ? <span className='text-white'>O e mail ou a senha informado estão incorretos</span> : <></>}
+
             <Link href={"/principal"}>
-              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => signIn("credentials", {email, senha, callbackUrl: '/principal'})}/>
+              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => signIn("credentials", { email, senha, redirect: false })
+                .then((error) => {
+                  setErrada(true)
+                })} />
             </Link>
 
           </div>

@@ -2,11 +2,16 @@
 
 import * as Avatar from '@radix-ui/react-avatar';
 import ButtonSide from './buttonside.js'
-import { House, UserCircleGear, CarSimple, UsersFour, CalendarBlank, SignOut } from '@phosphor-icons/react'
+import { UserCircleGear, CarSimple, UsersFour, CalendarBlank, SignOut } from '@phosphor-icons/react'
 import Link from 'next/link.js';
 import { signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
+
 
 export default function Sidebar(props) {
+    const { data: session, status } = useSession()
+
+
     return (
         <div className="bg-gradient-to-br from-emerald-300 to-emerald-950">
             <div className="h-full w-fit bg-black flex justify-center mr-[2px]">
@@ -20,14 +25,12 @@ export default function Sidebar(props) {
                             </Avatar.Image>
                         </Avatar.Root>
 
-                        <text className='text-lg font-semibold'>Andrei dos Santos Mattos</text>
-                        <text className='font-semibold text-amber-300'>Administrador</text>
+                        <text className='text-lg font-semibold'>{session?.nome_completo}</text>
+                        {session?.administrador ? <text className='font-semibold text-amber-300'>Administrador</text> : <></>}
+                        
 
                     </div>
                     <div className='text-white pt-10 px-3'>
-                        <Link href="/">
-                            <ButtonSide texto="Página Principal" icon={<House size={22} />} />
-                        </Link>
                         <Link href="/principal">
                             <ButtonSide texto="Calendário" icon={<CalendarBlank size={22} />} />
                         </Link>
