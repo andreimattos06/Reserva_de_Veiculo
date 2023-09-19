@@ -6,7 +6,6 @@ export const authOptions = {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       if (token != undefined) {
-        console.log(session)
         session.user.nome_completo = token.nome_completo
         session.user.administrador = token.administrador
       }

@@ -15,7 +15,6 @@ function daysInMonth(month, year) {
 
 export default function Principal() {
     const { data: session, status } = useSession()
-console.log(session)
     if (status === "unauthenticated") {
         redirect("/", "replace")
       }
