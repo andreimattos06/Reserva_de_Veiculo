@@ -25,8 +25,8 @@ export default function Sidebar(props) {
                             </Avatar.Image>
                         </Avatar.Root>
 
-                        <text className='text-lg font-semibold'>{session?.nome_completo}</text>
-                        {session?.administrador ? <text className='font-semibold text-amber-300'>Administrador</text> : <></>}
+                        <text className='text-lg font-semibold'>{session?.user.nome_completo}</text>
+                        {session?.user.administrador ? <text className='font-semibold text-amber-300'>Administrador</text> : <></>}
                         
 
                     </div>
