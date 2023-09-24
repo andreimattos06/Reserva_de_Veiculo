@@ -8,6 +8,7 @@ export const authOptions = {
       if (token != undefined) {
         session.user.nome_completo = token.nome_completo
         session.user.administrador = token.administrador
+        session.user.empresa = token.empresa
       }
 
 
@@ -17,6 +18,7 @@ export const authOptions = {
       if (user != undefined) {
         token.nome_completo = user.nome_completo
         token.administrador = user.administrador
+        token.empresa = user.empresa
       }
       return token
     }

@@ -34,7 +34,7 @@ export default function Home() {
             <Input icon={<User size={24} />} onChange={(target) => setEmail(target.target.value)} />
 
             <h1 className='pt-5'>Senha:</h1>
-            <Input icon={<Key size={24} />} onChange={(target) => setSenha(target.target.value)} />
+            <Input type="password" icon={<Key size={24} />} onChange={(target) => setSenha(target.target.value)} />
 
             <a className='text-sm font-normal'>Esqueceu a senha?</a>
 

@@ -27,7 +27,7 @@ export default function Sidebar(props) {
 
                         <text className='text-lg font-semibold'>{session?.user.nome_completo}</text>
                         {session?.user.administrador ? <text className='font-semibold text-amber-300'>Administrador</text> : <></>}
-                        
+
 
                     </div>
                     <div className='text-white pt-10 px-3'>
@@ -35,9 +35,13 @@ export default function Sidebar(props) {
                             <ButtonSide texto="Calendário" icon={<CalendarBlank size={22} />} />
                         </Link>
                         <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
+
                         <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
-                        <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
-                        <ButtonSide texto="Logout" onClick={() => signOut({ callbackUrl: "/" })} icon={<SignOut size={22}/>} />
+
+                        <Link href="/usuarios">
+                            <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
+                        </Link>
+                        <ButtonSide texto="Logout" onClick={() => signOut({ callbackUrl: "/" })} icon={<SignOut size={22} />} />
                     </div>
 
 
