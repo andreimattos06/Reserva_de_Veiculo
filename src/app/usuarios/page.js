@@ -56,7 +56,7 @@ export default function Usuarios() {
 
     }, [empresa])
 
-    function limparDadosUsuario(){
+    function limparDadosUsuario() {
         setDadosUsuario({
             email: "",
             nome_completo: "",
@@ -74,7 +74,50 @@ export default function Usuarios() {
         setDialog(true)
     }
 
-    console.log(dados_usuario)
+    function submitNovo(){
+
+    }
+
+    async function submitAlteracao(){
+        const res = await fetch('http://localhost:3334/updatedadosusers', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    id: dados_usuario.id, 
+                    nome_completo: dados_usuario.nome_completo, 
+                    email: dados_usuario.email,
+                    cpf: dados_usuario.cpf,
+                    setor: dados_usuario.setor,
+                    cargo: dados_usuario.cargo,
+                    administrador: dados_usuario.administrador
+                }),
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await res.json();
+    }
+
+    function submitEnviar(){
+        if (adicionarUser){
+            submitNovo()
+        }
+        else{
+            submitAlteracao()
+        }
+    }
+
+    async function getUsersInfo(id){
+        const res = await fetch('http://localhost:3334/getdadosusers', {
+                method: 'POST',
+                body: JSON.stringify({ id: id }),
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await res.json();
+        setDadosUsuario({...result})
+        setAdicionarUser(false) 
+        setDialog(true)
+        
+    }
+
+
     return (
         <div className="flex flex-row">
             <Sidebar />
@@ -105,7 +148,7 @@ export default function Usuarios() {
                             </Select.Content>
                         </Select.Portal>
                     </Select.Root>
-                    <Button icon={<Plus size={24} />} onClick={() => {novoUsuario()}} />
+                    <Button icon={<Plus size={24} />} onClick={() => { novoUsuario() }} />
                 </div>
                 <div className="text-white mt-11 border-[1px]  border-emerald-600 rounded-md">
                     <table className="table-auto border-collapse w-full text-center">
@@ -133,7 +176,7 @@ export default function Usuarios() {
                                         <td>{e.nome_completo}</td>
                                         <td>{e.cpf}</td>
                                         <td>{e.administrador ? "Sim" : "Não"}</td>
-                                        <td>{<Button onClick={() => { setAdicionarUser(false), setDialog(true) }} css="my-1" icon={<Pencil size={20} />} />}</td>
+                                        <td>{<Button onClick={() => {getUsersInfo(e.id)}} css="my-1" icon={<Pencil size={20} />} />}</td>
                                         <td>{<Button icon={<Trash size={20} />} />}</td>
                                     </tr>
                                 )
@@ -163,9 +206,22 @@ export default function Usuarios() {
                                 </div>
 
                                 <div className="grid grid-cols-1">
+                                    <span>E mail:</span>
+                                    <InputAlt value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
+                                </div>
+
+                                <div className="grid grid-cols-1">
                                     <span>CPF:</span>
                                     <InputAlt value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
                                 </div>
+
+                                {adicionarUser ?
+                                    <div className="grid grid-cols-1">
+                                        <span>Senha:</span>
+                                        <InputAlt type="" value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
+                                    </div>
+                                                : ""}
+
 
                                 <div className="grid grid-cols-1">
                                     <span>Setor:</span>
@@ -184,7 +240,7 @@ export default function Usuarios() {
                                 </div>
 
                                 <div className="justify-self-end">
-                                    <Button texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                    <Button onClick={submitEnviar} type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
                                 </div>
 
                             </div>
