@@ -7,7 +7,7 @@ import Button from "../components/button.js";
 import { Plus, Pencil, Trash, PaperPlaneTilt } from '@phosphor-icons/react'
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { Component, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js'
 import Checkbox from '../components/checkbox.js'

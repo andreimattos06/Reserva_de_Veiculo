@@ -39,7 +39,9 @@ export default function Sidebar(props) {
 
                         {session?.user?.administrador ?
                             <div>
-                                <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
+                                <Link href="/veiculos">
+                                    <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
+                                </Link>
 
                                 <Link href="/usuarios">
                                     <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
