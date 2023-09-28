@@ -36,11 +36,17 @@ export default function Sidebar(props) {
                         </Link>
                         <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
 
-                        <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
 
-                        <Link href="/usuarios">
-                            <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
-                        </Link>
+                        {session?.user?.administrador ?
+                            <div>
+                                <ButtonSide texto="Adm. Veículos" icon={<CarSimple size={22} />} />
+
+                                <Link href="/usuarios">
+                                    <ButtonSide texto="Adm. Usuários" icon={<UsersFour size={22} />} />
+                                </Link>
+                            </div>
+                            : ""}
+
                         <ButtonSide texto="Logout" onClick={() => signOut({ callbackUrl: "/" })} icon={<SignOut size={22} />} />
                     </div>
 

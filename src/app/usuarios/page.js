@@ -7,7 +7,7 @@ import Button from "../components/button.js";
 import { Plus, Pencil, Trash, PaperPlaneTilt } from '@phosphor-icons/react'
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useEffect, useState } from "react";
+import { Component, useEffect, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js'
 import Checkbox from '../components/checkbox.js'
@@ -37,11 +37,11 @@ export default function Usuarios() {
 
     useEffect(() => {
         setEmpresa(session?.user.empresa[0].id)
+        
 
     }, [])
 
     useEffect(() => {
-
         async function getData() {
             const res = await fetch('http://localhost:3334/getusers', {
                 method: 'POST',
@@ -74,8 +74,31 @@ export default function Usuarios() {
         setDialog(true)
     }
 
-    function submitNovo(){
-
+    async function submitNovo(){
+        const res = await fetch('http://localhost:3334/adduser', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    empresaid: empresa, 
+                    nome_completo: dados_usuario.nome_completo, 
+                    email: dados_usuario.email,
+                    cpf: dados_usuario.cpf,
+                    setor: dados_usuario.setor,
+                    cargo: dados_usuario.cargo,
+                    administrador: dados_usuario.administrador,
+                    senha: dados_usuario.senha
+                }),
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await res.json();
+            
+            if (result == "sucesso"){
+                alert("Cadastro adicionado com sucesso!")
+                location.reload()
+            }
+            else{
+                alert("Foram encontrados os seguintes erros: " + result)
+                location.reload()
+            }
     }
 
     async function submitAlteracao(){
@@ -93,6 +116,15 @@ export default function Usuarios() {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await res.json();
+            
+            if (result == "sucesso"){
+                alert("Cadastro atualizado com sucesso!")
+                location.reload()
+            }
+            else{
+                alert("Houve algum erro!")
+                location.reload()
+            }
     }
 
     function submitEnviar(){
