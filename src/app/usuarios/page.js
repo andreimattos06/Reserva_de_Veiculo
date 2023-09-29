@@ -4,13 +4,16 @@ import { useSession } from "next-auth/react"
 import Sidebar from '../components/sidebar.js';
 import { redirect } from 'next/navigation'
 import Button from "../components/button.js";
-import { Plus, Pencil, Trash, PaperPlaneTilt } from '@phosphor-icons/react'
+import { Plus, Pencil, Trash, PaperPlaneTilt, X, Check } from '@phosphor-icons/react'
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js'
 import Checkbox from '../components/checkbox.js'
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import AlertButton from '../components/alertbutton.js'
+import CancelButton from '../components/cancelbutton.js'
 
 
 export default function Usuarios() {
@@ -18,6 +21,8 @@ export default function Usuarios() {
     const [empresa, setEmpresa] = useState("")
     const [lista_users, setListaUser] = useState([])
     const [dialog, setDialog] = useState(false)
+    const [delete_dialog, setDeleteDialog] = useState(false)
+    const [delete_id, setDeleteID] = useState("")
     const [adicionarUser, setAdicionarUser] = useState(false)
     const [dados_usuario, setDadosUsuario] = useState({
         email: "",
@@ -127,6 +132,26 @@ export default function Usuarios() {
             }
     }
 
+    async function submitDelete(id) {
+        const res = await fetch('http://localhost:3334/deleteuser', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: delete_id,
+            }),
+            headers: { "Content-Type": "application/json" }
+        })
+        const result = await res.json();
+
+        if (result == "sucesso") {
+            alert("Usuario excluído com sucesso!")
+            location.reload()
+        }
+        else {
+            alert("Houve algum erro!")
+            location.reload()
+        }
+    }
+
     function submitEnviar(){
         if (adicionarUser){
             submitNovo()
@@ -209,7 +234,7 @@ export default function Usuarios() {
                                         <td>{e.cpf}</td>
                                         <td>{e.administrador ? "Sim" : "Não"}</td>
                                         <td>{<Button onClick={() => {getUsersInfo(e.id)}} css="my-1" icon={<Pencil size={20} />} />}</td>
-                                        <td>{<Button icon={<Trash size={20} />} />}</td>
+                                        <td>{<Button onClick={() => {setDeleteDialog(true), setDeleteID(e.id)}} icon={<Trash size={20} />} />}</td>
                                     </tr>
                                 )
                             })}
@@ -281,6 +306,24 @@ export default function Usuarios() {
                     </Dialog.Content>
                 </Dialog.Portal>
             </Dialog.Root>
+
+            <AlertDialog.Root open={delete_dialog} onOpenChange={() => { setDeleteDialog(false) }}>
+                <AlertDialog.Portal>
+                    <AlertDialog.Overlay className='fixed inset-0 bg-black opacity-80' />
+                    <AlertDialog.Content className='px-5 py-5 text-white w-2/6 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-black border-2 border-emerald-600 rounded-md'>
+                        <AlertDialog.Title className='font-bold text-3xl'> Você tem certeza?</AlertDialog.Title>
+                        <AlertDialog.Description className='font-semibold text-gray-300 pt-5'>Essa ação irá excluir o usuario selecionado da base de dados assim como todas as marcações vinculadas a ele.</AlertDialog.Description>
+                        <div className='flex pt-10 justify-end gap-5'>
+                            <AlertDialog.Cancel>
+                                <CancelButton  texto="Cancelar" icon={<X size={32} />} />
+                            </AlertDialog.Cancel>
+                            <AlertDialog.Action>
+                                <AlertButton onClick={submitDelete} texto="Confirmar" icon={<Check size={32} />} />
+                            </AlertDialog.Action>
+                        </div>
+                    </AlertDialog.Content>
+                </AlertDialog.Portal>
+            </AlertDialog.Root>
         </div>
     )
 }
