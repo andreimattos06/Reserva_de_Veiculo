@@ -34,7 +34,9 @@ export default function Sidebar(props) {
                         <Link href="/principal">
                             <ButtonSide texto="Calendário" icon={<CalendarBlank size={22} />} />
                         </Link>
-                        <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
+                        <Link href="/dadosdaconta">
+                            <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
+                        </Link>
 
 
                         {session?.user?.administrador ?
