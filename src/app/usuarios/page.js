@@ -191,10 +191,10 @@ export default function Usuarios() {
                             <Select.Content className="overflow-auto outline-none border-[1px] flex border-emerald-600 text-white font-semibold rounded-md w-full bg-black">
                                 <Select.Viewport className="p-3">
                                     <Select.Group>
-                                        {session?.user?.empresa.map(e => {
+                                        {session?.user?.empresa.map((e, index) => {
                                             let aux = e.numero + " - " + e.nome
                                             return (
-                                                <Select.Item className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" key={e.id} value={e.id}>
+                                                <Select.Item key={index+aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
                                                     <Select.ItemText>{aux}</Select.ItemText>
                                                 </Select.Item>
                                             )
@@ -227,7 +227,7 @@ export default function Usuarios() {
                                     par = true
                                 }
                                 return (
-                                    <tr className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
+                                    <tr key={e.cpf} className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
                                         <td className="px-5 py-2">{e.id}</td>
                                         <td>{e.email}</td>
                                         <td>{e.nome_completo}</td>

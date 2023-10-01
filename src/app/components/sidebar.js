@@ -18,15 +18,15 @@ export default function Sidebar(props) {
                 <div className="flex flex-col">
                     <div className="px-5 py-5 flex flex-col items-center justify-center text-white gap-5 border-b-[1px] border-zinc-700 text-center">
 
-                        <text className='text-xl font-bold tracking-wider'>Bem-Vindo</text>
+                        <span className='text-xl font-bold tracking-wider'>Bem-Vindo</span>
 
                         <Avatar.Root className='m-[1px] w-24 border-2 border-emerald-700 rounded-full inline-flex bg-black'>
                             <Avatar.Image className='h-full w-full' src="./logosicredi.png">
                             </Avatar.Image>
                         </Avatar.Root>
 
-                        <text className='text-lg font-semibold'>{session?.user.nome_completo}</text>
-                        {session?.user.administrador ? <text className='font-semibold text-amber-300'>Administrador</text> : <></>}
+                        <span className='text-lg font-semibold'>{session?.user.nome_completo}</span>
+                        {session?.user.administrador ? <span className='font-semibold text-amber-300'>Administrador</span> : <></>}
 
 
                     </div>
