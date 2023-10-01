@@ -181,7 +181,7 @@ export default function Veiculos() {
                                         {session?.user?.empresa.map((e, index) => {
                                             let aux = e.numero + " - " + e.nome
                                             return (
-                                                <Select.Item key={index+aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" key={e.id} value={e.id}>
+                                                <Select.Item key={index+aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
                                                     <Select.ItemText>{aux}</Select.ItemText>
                                                 </Select.Item>
                                             )

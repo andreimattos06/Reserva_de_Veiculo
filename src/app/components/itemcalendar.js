@@ -1,5 +1,9 @@
+import Button from "./button"
+import { Plus } from '@phosphor-icons/react'
+
 export default function ItemCalendar(props) {
 const dias_semana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 let indice_semana = props.index%7
 
     return (
@@ -12,8 +16,9 @@ let indice_semana = props.index%7
                     {dias_semana[indice_semana]}
                 </span>
             </div>
-            <div className="mt-5 place-self-end">
-                Setembro
+            <div className="mt-5 flex items-center justify-between">
+                <Button onClick={props.onClick} css="bg-emerald-900 p-0 text-black border-none hover:bg-emerald-600" icon={<Plus size={20} />}/>
+                {meses[Number(props.mes)-1]}
             </div>
 
         </div>

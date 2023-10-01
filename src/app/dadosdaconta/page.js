@@ -75,6 +75,7 @@ export default function DadosDaContal() {
         console.log(result)
         if (result === "sucesso") {
             alert("Dados atualizados com sucesso.")
+            signOut({ callbackUrl: "/" })
         }
         else {
             alert("Houve um erro: " + result)
@@ -112,7 +113,7 @@ export default function DadosDaContal() {
     return (
         <div className="flex flex-row h-screen">
             <Sidebar />
-            <div className="flex flex-row my-16 px-16 w-full gap-28">
+            <div className="flex flex-row my-16 px-40 w-4/5 gap-28 justify-between">
                 <div className="w-2/5 text-white">
                     <span className="text-3xl font-bold">Dados Cadastrais</span>
 

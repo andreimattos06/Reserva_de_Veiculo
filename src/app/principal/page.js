@@ -7,7 +7,11 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import InputMask from 'react-input-mask';
-import { MagnifyingGlass } from '@phosphor-icons/react'
+import { MagnifyingGlass, PaperPlaneTilt } from '@phosphor-icons/react'
+import * as Dialog from '@radix-ui/react-dialog';
+import InputAlt from '../components/inputalt.js';
+import * as Select from '@radix-ui/react-select';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 
 export default function Principal() {
@@ -18,24 +22,38 @@ export default function Principal() {
 
     const [calendario, setCalendario] = useState([])
     const [ano, setAno] = useState(new Date().getFullYear())
-    const [mes, setMes] = useState(new Date().getMonth())
+    const [mes, setMes] = useState(new Date().getMonth() + 1)
+    const [dialog, setDialog] = useState(false)
+    const [empresa, setEmpresa] = useState("")
+    const [veiculo, setVeiculo] = useState("")
+    const [mesextenso, setMesExtenso] = useState(new Date().getMonth() + 1)
     const [primeiro_dia, setPrimeiroDia] = useState(0)
     const [busca, setBusca] = useState(0)
+    const [nova_marcacao, setNovaMarcacao] = useState({
+        destino: "",
+        data_partida: "",
+        hora_partida: "",
+        data_retorno: "",
+        hora_retorno: "",
+        veiculo: "",
+        observacao: "",
+    })
 
     function daysInMonth(month, year) {
         return new Date(year, month, 0).getDate();
     }
 
-
     /** Use Effect inicial,para iniciar informações necessárias na execução */
     useEffect(() => {
+        setEmpresa(session?.user.empresa[0].id)
         setPrimeiroDia(new Date(ano, mes, 1).getDay())
 
     }, [])
 
     //Use Effect usado para atualizar o primeiro dia o mês quando houver mudança na data.
     useEffect(() => {
-        setPrimeiroDia(new Date(ano, mes-1, 1).getDay())
+        setPrimeiroDia(new Date(ano, mes - 1, 1).getDay())
+        setMesExtenso(mes)
     }, [busca])
 
     //Use Effect usado para atualizar o calendário quando obtivermos o dia da semana em que o mês inicia.
@@ -50,7 +68,6 @@ export default function Principal() {
 
     }, [primeiro_dia])
 
-   
 
     function onChangeMes(mes) {
         if (mes < 1 || mes > 12) {
@@ -66,7 +83,7 @@ export default function Principal() {
             if (ano < 2023 || ano > 2028) {
                 setAno(2023)
             }
-            else{
+            else {
                 setAno(ano)
             }
         }
@@ -76,17 +93,68 @@ export default function Principal() {
     }
 
 
+    async function showDialog(dia) {
+        const res = await fetch('http://localhost:3334/getveiculos', {
+            method: 'POST',
+            body: JSON.stringify({ empresaid: empresa }),
+            headers: { "Content-Type": "application/json" }
+        })
+        const result = await res.json();
+        
+
+        if (dia < 10) {
+            dia = "0" + dia
+        }
+        setNovaMarcacao({
+            destino: "",
+            data_partida: dia + "/" + mes + "/" + ano,
+            hora_partida: "",
+            data_retorno: "",
+            hora_retorno: "",
+            veiculo: "",
+            observacao: "",
+        })
+        setDialog(true)
+    }
 
     return (
         <>
             <div className="flex flex-row">
                 <Sidebar />
                 <div className='flex flex-col my-16 mx-16 w-4/5 gap-10'>
-                    <div className='self-end flex text-white font-semibold gap-2 text-lg items-center border-b-[1px] border-emerald-600'>
-                        <InputMask className='bg-black text-center w-5 focus:outline-none' mask="99" maskChar="" value={mes} onChange={(event) => { onChangeMes(event.target.value) }} />
-                        <span className='text-2xl font-bold text-emerald-600'> / </span>
-                        <InputMask className='bg-black text-center w-9 focus:outline-none' mask="9999" maskChar="" value={ano} onChange={(event) => { onChangeAno(event.target.value) }} />
-                        <Button css="border-0" icon={<MagnifyingGlass size={20} />} onClick={() => setBusca(busca+1)}/>
+                    <div className='flex w-full items-center justify-between'>
+                        <Select.Root value={empresa} onValueChange={(target) => setEmpresa(target)}>
+                            <Select.Trigger className=" text-white font-semibold outline-none px-3 inline-flex items-center justify-between border-[1px] cursor-default border-emerald-600 h-full rounded-md w-2/6">
+                                <Select.Value></Select.Value>
+                                <Select.Icon className="text-white">
+                                    <ChevronDownIcon />
+                                </Select.Icon>
+                            </Select.Trigger>
+                            <Select.Portal>
+                                <Select.Content className="overflow-auto outline-none border-[1px] flex border-emerald-600 text-white font-semibold rounded-md w-full bg-black">
+                                    <Select.Viewport className="p-3">
+                                        <Select.Group>
+                                            {session?.user?.empresa.map((e, index) => {
+                                                let aux = e.numero + " - " + e.nome
+                                                return (
+                                                    <Select.Item key={index + aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
+                                                        <Select.ItemText>{aux}</Select.ItemText>
+                                                    </Select.Item>
+                                                )
+                                            })}
+                                        </Select.Group>
+
+                                    </Select.Viewport>
+                                </Select.Content>
+                            </Select.Portal>
+                        </Select.Root>
+
+                        <div className='self-end flex text-white font-semibold gap-2 text-lg items-center'>
+                            <InputMask className='bg-black text-center w-5 focus:outline-none' mask="99" maskChar="" value={mes} onChange={(event) => { onChangeMes(event.target.value) }} />
+                            <span className='text-2xl font-bold text-emerald-600'> / </span>
+                            <InputMask className='bg-black text-center w-9 focus:outline-none' mask="9999" maskChar="" value={ano} onChange={(event) => { onChangeAno(event.target.value) }} />
+                            <Button css="border-0" icon={<MagnifyingGlass size={20} />} onClick={() => setBusca(busca + 1)} />
+                        </div>
                     </div>
                     <div className='w-full grid grid-cols-7 gap-3'>
                         {calendario.map((e, index) => {
@@ -95,7 +163,7 @@ export default function Principal() {
                             }
                             else {
                                 return (
-                                    <ItemCalendar dia={e} index={index} />
+                                    <ItemCalendar onClick={() => showDialog(e)} key={index + mes + ano} dia={e} index={index} mes={mesextenso} />
                                 )
                             }
                         })}
@@ -105,6 +173,78 @@ export default function Principal() {
 
                 </div>
             </div>
+
+            <Dialog.Root open={dialog} onOpenChange={() => setDialog(false)} className="">
+                <Dialog.Trigger />
+                <Dialog.Portal>
+                    <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed" />
+                    <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-3/12 bg-black border-2 border-emerald-600 rounded-md py-10 px-10">
+                        <Dialog.Title className="text-white text-2xl font-bold">
+                            Nova Marcação
+                        </Dialog.Title>
+                        <form>
+                            <div className="grid grid-cols1 text-white pt-8 gap-5 font-semibold">
+
+                                <div className="grid grid-cols-1">
+                                    <span>Destino:</span>
+                                    <InputAlt placeholder="Cristalina - GO" value={nova_marcacao.destino} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, destino: e.target.value })} />
+                                </div>
+
+                                <div className="grid grid-cols-2">
+                                    <span>Data e Hora da Partida:</span>
+                                    <div />
+                                    <InputAlt disabled value={nova_marcacao.data_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_partida: e.target.value })} />
+                                    <InputAlt placeholder="08:00" value={nova_marcacao.hora_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_partida: e.target.value })} />
+                                </div>
+
+                                <div className="grid grid-cols-2">
+                                    <span>Data e Hora do Retorno:</span>
+                                    <div />
+                                    <InputAlt placeholder="01/01/2023" value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
+                                    <InputAlt placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: e.target.value })} />
+                                </div>
+
+                                <div className='grid grid-cols-1'>
+                                    <Select.Root value={veiculo} onValueChange={(target) => setVeiculo(target)}>
+                                        <Select.Trigger className="font-semibold outline-none px-3 inline-flex items-center justify-between border-[1px] cursor-default border-emerald-600 h-full rounded-md w-2/6">
+                                            <Select.Value></Select.Value>
+                                            <Select.Icon className="text-white">
+                                                <ChevronDownIcon />
+                                            </Select.Icon>
+                                        </Select.Trigger>
+                                        <Select.Portal>
+                                            <Select.Content className="overflow-auto outline-none border-[1px] flex border-emerald-600 text-white font-semibold rounded-md w-full bg-black">
+                                                <Select.Viewport className="p-3">
+                                                    <Select.Group>
+
+                                                        <Select.Item key="asdasd"className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default">
+                                                            <Select.ItemText>aa</Select.ItemText>
+                                                        </Select.Item>
+
+
+                                                    </Select.Group>
+
+                                                </Select.Viewport>
+                                            </Select.Content>
+                                        </Select.Portal>
+                                    </Select.Root>
+                                </div>
+
+                                <div className="grid grid-cols-1">
+                                    <span>Observacao:</span>
+                                    <InputAlt placeholder="Deslocamento para treinamento" value={nova_marcacao.observacao} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, observacao: e.target.value })} />
+                                </div>
+
+                                <div className="justify-self-end">
+                                    <Button type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                </div>
+
+                            </div>
+                        </form>
+                        <Dialog.Close />
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
         </>
     )
 }
