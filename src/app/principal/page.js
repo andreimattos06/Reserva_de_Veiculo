@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import InputMask from 'react-input-mask';
-import { MagnifyingGlass, PaperPlaneTilt } from '@phosphor-icons/react'
+import { MagnifyingGlass, PaperPlaneTilt, Car } from '@phosphor-icons/react'
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js';
 import * as Select from '@radix-ui/react-select';
@@ -26,6 +26,7 @@ export default function Principal() {
     const [dialog, setDialog] = useState(false)
     const [empresa, setEmpresa] = useState("")
     const [veiculo, setVeiculo] = useState("")
+    const [lista_veiculos, setListaVeiculos] = useState([])
     const [mesextenso, setMesExtenso] = useState(new Date().getMonth() + 1)
     const [primeiro_dia, setPrimeiroDia] = useState(0)
     const [busca, setBusca] = useState(0)
@@ -39,6 +40,17 @@ export default function Principal() {
         observacao: "",
     })
 
+    function clearNovaMarcacao() {
+        setNovaMarcacao({
+            destino: "",
+            data_partida: "",
+            hora_partida: "",
+            data_retorno: "",
+            hora_retorno: "",
+            veiculo: "",
+            observacao: "",
+        })
+    }
     function daysInMonth(month, year) {
         return new Date(year, month, 0).getDate();
     }
@@ -67,6 +79,10 @@ export default function Principal() {
         setCalendario(array)
 
     }, [primeiro_dia])
+
+    useEffect(() => {
+        setVeiculo(lista_veiculos[0]?.id)
+    }, [lista_veiculos])
 
 
     function onChangeMes(mes) {
@@ -100,7 +116,8 @@ export default function Principal() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
-        
+        setListaVeiculos(result)
+
 
         if (dia < 10) {
             dia = "0" + dia
@@ -116,6 +133,34 @@ export default function Principal() {
         })
         setDialog(true)
     }
+
+    async function newMarcacao() {
+
+        const res = await fetch('http://localhost:3334/addmarcacao', {
+            method: 'POST',
+            body: JSON.stringify({
+                destino: nova_marcacao.destino,
+                observacao: nova_marcacao.observacao,
+                data_partida: new Date("".concat(ano, "-", mes, '-', nova_marcacao.data_partida.slice(0, 2), "T", nova_marcacao.hora_partida.slice(0, 2), ":", nova_marcacao.hora_partida.slice(3, 5), ":00")),
+                data_retorno: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno.slice(0, 2), ":", nova_marcacao.hora_retorno.slice(3, 5), ":00")),
+                veiculo: veiculo,
+                email: session?.user.email
+            }),
+            headers: { "Content-Type": "application/json" }
+        })
+        const result = await res.json();
+        if (result == "sucesso") {
+            alert("Marcação criada com sucesso.")
+            clearNovaMarcacao()
+            setDialog(false)
+
+        }
+        else{
+            alert("Houve um erro.")
+        }
+    }
+
+    console.log(veiculo)
 
     return (
         <>
@@ -205,10 +250,10 @@ export default function Principal() {
                                 </div>
 
                                 <div className='grid grid-cols-1'>
-                                    <Select.Root value={veiculo} onValueChange={(target) => setVeiculo(target)}>
-                                        <Select.Trigger className="font-semibold outline-none px-3 inline-flex items-center justify-between border-[1px] cursor-default border-emerald-600 h-full rounded-md w-2/6">
+                                    <Select.Root key={veiculo} value={veiculo} onValueChange={(target) => setVeiculo(target)}>
+                                        <Select.Trigger className="text-white font-semibold outline-none px-3 py-2 inline-flex items-center justify-between border-[1px] cursor-default border-emerald-600 h-full rounded-md w-full">
                                             <Select.Value></Select.Value>
-                                            <Select.Icon className="text-white">
+                                            <Select.Icon>
                                                 <ChevronDownIcon />
                                             </Select.Icon>
                                         </Select.Trigger>
@@ -216,12 +261,19 @@ export default function Principal() {
                                             <Select.Content className="overflow-auto outline-none border-[1px] flex border-emerald-600 text-white font-semibold rounded-md w-full bg-black">
                                                 <Select.Viewport className="p-3">
                                                     <Select.Group>
-
-                                                        <Select.Item key="asdasd"className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default">
-                                                            <Select.ItemText>aa</Select.ItemText>
-                                                        </Select.Item>
-
-
+                                                        {lista_veiculos.map(e => {
+                                                            let aux = e.marca + " " + e.modelo + " - " + e.placa + " - " + e.identificacao
+                                                            return (
+                                                                <Select.Item key={aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
+                                                                    <Select.ItemText>
+                                                                        <div className='flex items-center gap-3'>
+                                                                            <Car size={22} />
+                                                                            {aux}
+                                                                        </div>
+                                                                    </Select.ItemText>
+                                                                </Select.Item>
+                                                            )
+                                                        })}
                                                     </Select.Group>
 
                                                 </Select.Viewport>
@@ -236,7 +288,7 @@ export default function Principal() {
                                 </div>
 
                                 <div className="justify-self-end">
-                                    <Button type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                    <Button onClick={newMarcacao} type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
                                 </div>
 
                             </div>
