@@ -160,8 +160,6 @@ export default function Principal() {
         }
     }
 
-    console.log(veiculo)
-
     return (
         <>
             <div className="flex flex-row">
