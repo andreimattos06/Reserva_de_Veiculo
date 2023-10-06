@@ -147,19 +147,24 @@ export default function Principal() {
             headers: { "Content-Type": "application/json" }
         })
         const veiculos_indisponiveis = await res2.json();
+        
 
-        veiculos.map(e => {
-            let indisponivel = false
+        let array = veiculos.filter(e => {
+            e.indisponivel = false
             for(let i=0; i<veiculos_indisponiveis.length; i++){
                 if (e.id == veiculos_indisponiveis[i].carro.id){
-                    indisponivel = true
+                    e.indisponivel = true
                 }
             }
-            if (!indisponivel){
-                setListaVeiculos([...lista_veiculos, e])
+            if (!e.indisponivel){
+                console.log(e)
+                return e
             }
         })
+        setListaVeiculos(array)
     }
+    console.log(lista_veiculos)
+    
 
     /* async function updateCarros(result, dia) {
          let copia = [...result]
