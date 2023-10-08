@@ -35,7 +35,7 @@ export default function DadosDaContal() {
     useEffect(() => {
 
         const fetchData = async () => {
-            const res = await fetch(`${env(FETCH_URL) + "/getdados"}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdados"}`, {
                 method: 'POST',
                 body: JSON.stringify({ email: session?.user.email }),
                 headers: { "Content-Type": "application/json" }
@@ -59,7 +59,7 @@ export default function DadosDaContal() {
 
     async function atualizacaoDados() {
 
-        const res = await fetch(`${env(FETCH_URL) + "/updatedados"}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedados"}`, {
             method: 'POST',
             body: JSON.stringify({
                 email: dados.email,
@@ -86,7 +86,7 @@ export default function DadosDaContal() {
     async function atualizacaoSenha() {
 
         if (iguais) {
-            const res = await fetch(`${env(FETCH_URL) + "/updatesenha"}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatesenha"}`, {
                 method: 'POST',
                 body: JSON.stringify({
                     senhaantiga: senhas.senhaantiga,

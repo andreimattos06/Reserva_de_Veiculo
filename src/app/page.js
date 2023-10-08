@@ -21,7 +21,6 @@ export default function Home() {
     redirect("/principal", "replace")
   }
 
-
   return (
     <>
       <div className='flex justify-center items-center h-screen w-screen text-white font-semibold tracking-wide'>

@@ -88,7 +88,7 @@ export default function Principal() {
     }, [empresa, calendario])
 
     async function getMarcacoes() {
-        const res = await fetch(`${env(FETCH_URL) + "/getmarcacoesmes"}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getmarcacoesmes"}`, {
             method: 'POST',
             body: JSON.stringify({
                 empresa: empresa,
@@ -127,14 +127,14 @@ export default function Principal() {
     async function getVeiculosDisponiveis() {
         setEdit(false)
 
-        const res = await fetch(`${env(FETCH_URL) + "/getveiculos"}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
             method: 'POST',
             body: JSON.stringify({ empresaid: empresa }),
             headers: { "Content-Type": "application/json" }
         })
         const veiculos = await res.json();
 
-        const res2 = await fetch(`${env(FETCH_URL) + "/getcarrosindisponiveis"}`, {
+        const res2 = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getcarrosindisponiveis"}`, {
             method: 'POST',
             body: JSON.stringify({
                 empresa: empresa,
@@ -196,7 +196,7 @@ export default function Principal() {
 
     async function newMarcacao() {
 
-        const res = await fetch(`${env(FETCH_URL) + "/addmarcacao"}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addmarcacao"}`, {
             method: 'POST',
             body: JSON.stringify({
                 destino: nova_marcacao.destino,
