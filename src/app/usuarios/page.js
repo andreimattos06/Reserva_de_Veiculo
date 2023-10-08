@@ -14,6 +14,7 @@ import Checkbox from '../components/checkbox.js'
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
+import Loading from '../components/loading.js'
 
 
 export default function Usuarios() {
@@ -24,6 +25,7 @@ export default function Usuarios() {
     const [delete_dialog, setDeleteDialog] = useState(false)
     const [delete_id, setDeleteID] = useState("")
     const [adicionarUser, setAdicionarUser] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [dados_usuario, setDadosUsuario] = useState({
         email: "",
         nome_completo: "",
@@ -47,6 +49,7 @@ export default function Usuarios() {
     }, [])
 
     useEffect(() => {
+        setLoading(true)
         async function getData() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getusers"}`, {
                 method: 'POST',
@@ -55,6 +58,7 @@ export default function Usuarios() {
             })
             const result = await res.json();
             setListaUser(result)
+            setLoading(false)
 
         }
         getData()
@@ -80,6 +84,7 @@ export default function Usuarios() {
     }
 
     async function submitNovo(){
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/adduser"}`, {
                 method: 'POST',
                 body: JSON.stringify({ 
@@ -95,6 +100,7 @@ export default function Usuarios() {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await res.json();
+            setLoading(false)
             
             if (result == "sucesso"){
                 alert("Cadastro adicionado com sucesso!")
@@ -107,6 +113,7 @@ export default function Usuarios() {
     }
 
     async function submitAlteracao(){
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedadosusers"}`, {
                 method: 'POST',
                 body: JSON.stringify({ 
@@ -121,6 +128,7 @@ export default function Usuarios() {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await res.json();
+            setLoading(false)
             
             if (result == "sucesso"){
                 alert("Cadastro atualizado com sucesso!")
@@ -133,6 +141,7 @@ export default function Usuarios() {
     }
 
     async function submitDelete(id) {
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/deleteuser"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -141,6 +150,7 @@ export default function Usuarios() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
 
         if (result == "sucesso") {
             alert("Usuario excluído com sucesso!")
@@ -324,6 +334,12 @@ export default function Usuarios() {
                     </AlertDialog.Content>
                 </AlertDialog.Portal>
             </AlertDialog.Root>
+
+            {loading ?
+                <Loading />
+                :
+                <></>
+            }
         </div>
     )
 }

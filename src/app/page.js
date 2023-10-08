@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react"
 import { useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
+import Loading from './components/loading.js'
 
 
 export default function Home() {
@@ -16,16 +17,12 @@ export default function Home() {
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
   const [errada, setErrada] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   if (status === "authenticated") {
     redirect("/principal", "replace")
   }
-  console.log("Public:")
-  console.log(process.env.NEXT_PUBLIC_FETCH_URL)
-  console.log("Non Public:")
-  console.log(process.env.FETCH_URL)
-  console.log("Session:")
-  console.log(session)
+
   return (
     <>
       <div className='flex justify-center items-center h-screen w-screen text-white font-semibold tracking-wide'>
@@ -45,15 +42,22 @@ export default function Home() {
             {errada ? <span className='text-white'>O e mail ou a senha informado estão incorretos</span> : <></>}
 
             <Link href={"/principal"}>
-              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => signIn("credentials", { email, senha, redirect: false })
-                .then((error) => {
-                  setErrada(true)
-                })} />
+              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => {
+                setLoading(true), signIn("credentials", { email, senha, redirect: false })
+                  .then((error) => {
+                    setErrada(true)
+                  })
+              }} />
             </Link>
 
           </div>
         </div>
       </div>
+
+      {loading ?
+        <Loading />
+        :
+        <></>}
     </>
   )
 }

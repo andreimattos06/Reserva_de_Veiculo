@@ -12,6 +12,7 @@ import { Plus, Pencil, Trash, PaperPlaneTilt, Check, X } from '@phosphor-icons/r
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
+import Loading from '../components/loading.js';
 
 export default function Veiculos() {
     const [empresa, setEmpresa] = useState("")
@@ -19,6 +20,7 @@ export default function Veiculos() {
     const [dialog, setDialog] = useState(false)
     const [delete_dialog, setDeleteDialog] = useState(false)
     const [delete_id, setDeleteID] = useState("")
+    const [loading, setLoading] = useState(false)
     const [adicionarVeiculo, setAdicionarVeiculo] = useState(false)
     const [dados_veiculo, setDadosVeiculo] = useState({
         id: "",
@@ -40,6 +42,7 @@ export default function Veiculos() {
     }, [])
 
     useEffect(() => {
+        setLoading(true)
         async function getData() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
                 method: 'POST',
@@ -48,6 +51,7 @@ export default function Veiculos() {
             })
             const result = await res.json();
             setListaVeiculos(result)
+            setLoading(false)
 
         }
         getData()
@@ -71,6 +75,7 @@ export default function Veiculos() {
     }
 
     async function submitNovo() {
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -84,6 +89,7 @@ export default function Veiculos() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
 
         if (result == "sucesso") {
             alert("Veiculo adicionado com sucesso!")
@@ -96,6 +102,7 @@ export default function Veiculos() {
     }
 
     async function submitAlteracao() {
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedadosveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -108,6 +115,7 @@ export default function Veiculos() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
 
         if (result == "sucesso") {
             alert("Veiculo atualizado com sucesso!")
@@ -120,6 +128,7 @@ export default function Veiculos() {
     }
 
     async function submitDelete(id) {
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/deleteveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -128,6 +137,7 @@ export default function Veiculos() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
 
         if (result == "sucesso") {
             alert("Veiculo excluído com sucesso!")
@@ -292,6 +302,12 @@ export default function Veiculos() {
                     </AlertDialog.Content>
                 </AlertDialog.Portal>
             </AlertDialog.Root>
+
+            {loading ?
+                <Loading />
+                :
+                <></>
+            }
 
         </div>
     )

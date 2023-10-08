@@ -12,6 +12,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js';
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import Loading from '../components/loading.js'
 
 
 export default function Principal() {
@@ -22,6 +23,7 @@ export default function Principal() {
 
     const [calendario, setCalendario] = useState([])
     const [dia, setDia] = useState()
+    const [loading, setLoading] = useState(false)
     const [edit, setEdit] = useState(true)
     const [ano, setAno] = useState(new Date().getFullYear())
     const [mes, setMes] = useState(new Date().getMonth() + 1)
@@ -87,20 +89,6 @@ export default function Principal() {
 
     }, [empresa, calendario])
 
-    async function getMarcacoes() {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getmarcacoesmes"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                empresa: empresa,
-                data_partida: new Date("2023-10-01T00:00:00.000Z"),
-                data_retorno: new Date("2023-10-31T11:00:00.000Z"),
-            }),
-            headers: { "Content-Type": "application/json" }
-        })
-        const result = await res.json();
-        setMarcacoes(result)
-    }
-
     function onChangeMes(mes) {
         if (mes < 1 || mes > 12) {
             setMes(1)
@@ -126,6 +114,7 @@ export default function Principal() {
 
     async function getVeiculosDisponiveis() {
         setEdit(false)
+        setLoading(true)
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
             method: 'POST',
@@ -157,15 +146,16 @@ export default function Principal() {
                 return e
             }
         })
-        
-        if (array.length > 0){
+        setLoading(false)
+
+        if (array.length > 0) {
             setListaVeiculos(array)
             setVeiculo(array[0].id)
         }
-        else{
+        else {
             alert("Nenhum carros disponível.")
         }
-        
+
     }
 
     function editNovaMarcacao() {
@@ -195,7 +185,7 @@ export default function Principal() {
     }
 
     async function newMarcacao() {
-
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addmarcacao"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -209,6 +199,7 @@ export default function Principal() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
         if (result == "sucesso") {
             alert("Marcação criada com sucesso.")
             clearNovaMarcacao()
@@ -340,7 +331,7 @@ export default function Principal() {
                                                 </Select.Content>
                                             </Select.Portal>
                                         </Select.Root>
-                                        
+
                                         :
                                         <></>
                                     }
@@ -367,6 +358,13 @@ export default function Principal() {
                     </Dialog.Content>
                 </Dialog.Portal>
             </Dialog.Root>
+
+            {loading ?
+                <Loading />
+                :
+                <></>
+            }
+
         </>
     )
 }

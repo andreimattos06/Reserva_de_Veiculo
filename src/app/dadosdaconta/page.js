@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation'
 import Button from "../components/button"
 import { ArrowsClockwise } from '@phosphor-icons/react'
 import { signOut } from "next-auth/react"
+import Loading from '../components/loading.js'
 
 export default function DadosDaContal() {
 
@@ -17,6 +18,7 @@ export default function DadosDaContal() {
     }
 
     const [iguais, setIguais] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [senhas, setSenhas] = useState({
         senhaantiga: "",
         senhanova: "",
@@ -33,7 +35,7 @@ export default function DadosDaContal() {
     })
 
     useEffect(() => {
-
+        setLoading(true)
         const fetchData = async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdados"}`, {
                 method: 'POST',
@@ -42,6 +44,7 @@ export default function DadosDaContal() {
             })
             const result = await res.json();
             setDados(result)
+            setLoading(false)
         }
         fetchData()
 
@@ -58,7 +61,7 @@ export default function DadosDaContal() {
     }, [senhas.senhanova, senhas.confirmacao])
 
     async function atualizacaoDados() {
-
+        setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedados"}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -72,6 +75,7 @@ export default function DadosDaContal() {
             headers: { "Content-Type": "application/json" }
         })
         const result = await res.json();
+        setLoading(false)
         console.log(result)
         if (result === "sucesso") {
             alert("Dados atualizados com sucesso.")
@@ -187,6 +191,11 @@ export default function DadosDaContal() {
 
                 </div>
             </div>
+            {loading ?
+                <Loading />
+                :
+                <></>
+            }
         </div>
     )
 }
