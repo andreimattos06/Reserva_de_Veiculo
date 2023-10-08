@@ -20,7 +20,12 @@ export default function Home() {
   if (status === "authenticated") {
     redirect("/principal", "replace")
   }
-
+  console.log("Public:")
+  console.log(process.env.NEXT_PUBLIC_FETCH_URL)
+  console.log("Non Public:")
+  console.log(process.env.FETCH_URL)
+  console.log("Session:")
+  console.log(session)
   return (
     <>
       <div className='flex justify-center items-center h-screen w-screen text-white font-semibold tracking-wide'>
