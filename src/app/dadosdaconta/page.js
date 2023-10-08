@@ -35,7 +35,7 @@ export default function DadosDaContal() {
     useEffect(() => {
 
         const fetchData = async () => {
-            const res = await fetch('http://localhost:3334/getdados', {
+            const res = await fetch('https://reserva-carro-node.onrender.com/getdados', {
                 method: 'POST',
                 body: JSON.stringify({ email: session?.user.email }),
                 headers: { "Content-Type": "application/json" }
@@ -59,7 +59,7 @@ export default function DadosDaContal() {
 
     async function atualizacaoDados() {
 
-        const res = await fetch('http://localhost:3334/updatedados', {
+        const res = await fetch('https://reserva-carro-node.onrender.com/updatedados', {
             method: 'POST',
             body: JSON.stringify({
                 email: dados.email,
@@ -86,7 +86,7 @@ export default function DadosDaContal() {
     async function atualizacaoSenha() {
 
         if (iguais) {
-            const res = await fetch('http://localhost:3334/updatesenha', {
+            const res = await fetch('https://reserva-carro-node.onrender.com/updatesenha', {
                 method: 'POST',
                 body: JSON.stringify({
                     senhaantiga: senhas.senhaantiga,

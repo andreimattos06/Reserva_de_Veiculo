@@ -48,7 +48,7 @@ export default function Usuarios() {
 
     useEffect(() => {
         async function getData() {
-            const res = await fetch('http://localhost:3334/getusers', {
+            const res = await fetch('https://reserva-carro-node.onrender.com/getusers', {
                 method: 'POST',
                 body: JSON.stringify({ empresaid: empresa }),
                 headers: { "Content-Type": "application/json" }
@@ -80,7 +80,7 @@ export default function Usuarios() {
     }
 
     async function submitNovo(){
-        const res = await fetch('http://localhost:3334/adduser', {
+        const res = await fetch('https://reserva-carro-node.onrender.com/adduser', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     empresaid: empresa, 
@@ -107,7 +107,7 @@ export default function Usuarios() {
     }
 
     async function submitAlteracao(){
-        const res = await fetch('http://localhost:3334/updatedadosusers', {
+        const res = await fetch('https://reserva-carro-node.onrender.com/updatedadosusers', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     id: dados_usuario.id, 
@@ -133,7 +133,7 @@ export default function Usuarios() {
     }
 
     async function submitDelete(id) {
-        const res = await fetch('http://localhost:3334/deleteuser', {
+        const res = await fetch('https://reserva-carro-node.onrender.com/deleteuser', {
             method: 'POST',
             body: JSON.stringify({
                 id: delete_id,
@@ -162,7 +162,7 @@ export default function Usuarios() {
     }
 
     async function getUsersInfo(id){
-        const res = await fetch('http://localhost:3334/getdadosusers', {
+        const res = await fetch('https://reserva-carro-node.onrender.com/getdadosusers', {
                 method: 'POST',
                 body: JSON.stringify({ id: id }),
                 headers: { "Content-Type": "application/json" }
