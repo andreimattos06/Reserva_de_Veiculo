@@ -41,7 +41,7 @@ export default function Veiculos() {
 
     useEffect(() => {
         async function getData() {
-            const res = await fetch('https://reserva-carro-node.onrender.com/getveiculos', {
+            const res = await fetch(`${env(FETCH_URL) + "/getveiculos"}`, {
                 method: 'POST',
                 body: JSON.stringify({ empresaid: empresa }),
                 headers: { "Content-Type": "application/json" }
@@ -71,7 +71,7 @@ export default function Veiculos() {
     }
 
     async function submitNovo() {
-        const res = await fetch('https://reserva-carro-node.onrender.com/addveiculo', {
+        const res = await fetch(`${env(FETCH_URL) + "/addveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
                 empresaid: empresa,
@@ -96,7 +96,7 @@ export default function Veiculos() {
     }
 
     async function submitAlteracao() {
-        const res = await fetch('https://reserva-carro-node.onrender.com/updatedadosveiculo', {
+        const res = await fetch(`${env(FETCH_URL) + "/updatedadosveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
                 id: dados_veiculo.id,
@@ -120,7 +120,7 @@ export default function Veiculos() {
     }
 
     async function submitDelete(id) {
-        const res = await fetch('https://reserva-carro-node.onrender.com/deleteveiculo', {
+        const res = await fetch(`${env(FETCH_URL) + "/deleteveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({
                 id: delete_id,
@@ -149,7 +149,7 @@ export default function Veiculos() {
     }
 
     async function getVeiculoInfo(id) {
-        const res = await fetch('https://reserva-carro-node.onrender.com/getdadosveiculo', {
+        const res = await fetch(`${env(FETCH_URL) + "/getdadosveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({ id: id }),
             headers: { "Content-Type": "application/json" }
