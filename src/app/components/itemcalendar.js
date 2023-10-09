@@ -7,7 +7,7 @@ const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julh
 let indice_semana = props.index%7
 
     return (
-        <div className={"w-full flex flex-col border-2 border-emerald-700 rounded-lg span-white h-full px-3 py-1 gap-11 hover:bg-emerald-800 duration-500 text-white" + (props.dia <= 0 ? " invisible" : "")}>
+        <div onClick={props.onClick2} className={"w-full flex flex-col border-2 border-emerald-700 rounded-lg span-white h-full px-3 py-1 gap-11 hover:bg-emerald-800 duration-500 text-white" + (props.dia <= 0 ? " invisible" : "")}>
             <div className="w-full flex items-center justify-between">
                 <span className="text-lg font-semibold">
                     {props.dia}
@@ -17,7 +17,7 @@ let indice_semana = props.index%7
                 </span>
             </div>
             <div className="mt-5 flex items-center justify-between">
-                <Button onClick={props.onClick} css="bg-emerald-900 p-0 text-black border-none hover:bg-emerald-600" icon={<Plus size={20} />}/>
+                <Button onClick={(e) => {props.onClick(), e.stopPropagation()}} css="bg-emerald-900 p-0 text-black border-none hover:bg-emerald-600" icon={<Plus size={20} />}/>
                 {meses[Number(props.mes)-1]}
             </div>
 

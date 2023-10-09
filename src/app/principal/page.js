@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import InputMask from 'react-input-mask';
-import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple } from '@phosphor-icons/react'
+import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple, User, CalendarPlus, CalendarX, CarProfile, MapPin } from '@phosphor-icons/react'
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js';
 import * as Select from '@radix-ui/react-select';
@@ -28,9 +28,10 @@ export default function Principal() {
     const [ano, setAno] = useState(new Date().getFullYear())
     const [mes, setMes] = useState(new Date().getMonth() + 1)
     const [dialog, setDialog] = useState(false)
+    const [dialog_marcacoes, setDialogMarcacoes] = useState(false)
     const [empresa, setEmpresa] = useState("")
+    const [marcacoes_dia, setMarcacoesDia] = useState([])
     const [veiculo, setVeiculo] = useState()
-    const [marcacoes, setMarcacoes] = useState([])
     const [lista_veiculos, setListaVeiculos] = useState([])
     const [mesextenso, setMesExtenso] = useState(new Date().getMonth() + 1)
     const [primeiro_dia, setPrimeiroDia] = useState(0)
@@ -84,10 +85,6 @@ export default function Principal() {
 
     }, [primeiro_dia])
 
-
-    useEffect(() => {
-
-    }, [empresa, calendario])
 
     function onChangeMes(mes) {
         if (mes < 1 || mes > 12) {
@@ -184,6 +181,26 @@ export default function Principal() {
         setDialog(true)
     }
 
+    async function showDialogMarcacoes(dia){
+        if (dia < 10){
+            dia = "0" + dia
+        }
+        setLoading(true)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getmarcacoesdia"}`, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                empresa: empresa,
+                data: ano + "-" + mes + "-" + dia
+            }),
+            headers: { "Content-Type": "application/json" }
+        })
+        const result = await res.json();
+        setMarcacoesDia(result)
+        setDialogMarcacoes(true)
+        setLoading(false)
+
+    }
+
     async function newMarcacao() {
         setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addmarcacao"}`, {
@@ -194,7 +211,8 @@ export default function Principal() {
                 data_partida: new Date("".concat(ano, "-", mes, '-', nova_marcacao.data_partida.slice(0, 2), "T", nova_marcacao.hora_partida.slice(0, 2), ":", nova_marcacao.hora_partida.slice(3, 5), ":00.000Z")),
                 data_retorno: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno.slice(0, 2), ":", nova_marcacao.hora_retorno.slice(3, 5), ":00.000Z")),
                 veiculo: veiculo,
-                email: session?.user.email
+                email: session?.user.email,
+                empresa: empresa,
             }),
             headers: { "Content-Type": "application/json" }
         })
@@ -210,7 +228,7 @@ export default function Principal() {
             alert("Houve um erro.")
         }
     }
-
+    console.log(marcacoes_dia)
     return (
         <>
             <div className="flex flex-row">
@@ -257,7 +275,7 @@ export default function Principal() {
                             }
                             else {
                                 return (
-                                    <ItemCalendar onClick={() => showDialog(e)} key={index + mes + ano} dia={e} index={index} mes={mesextenso} />
+                                    <ItemCalendar onClick2={() => showDialogMarcacoes(e)} onClick={() => showDialog(e)} key={index + mes + ano} dia={e} index={index} mes={mesextenso} />
                                 )
                             }
                         })}
@@ -354,6 +372,48 @@ export default function Principal() {
 
                             </div>
                         </form>
+                        <Dialog.Close />
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
+
+            <Dialog.Root open={dialog_marcacoes} onOpenChange={() => setDialogMarcacoes(false)} className="">
+                <Dialog.Trigger />
+                <Dialog.Portal>
+                    <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed" />
+                    <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 bg-black border-2 border-emerald-600 rounded-md px-10">
+                        <div className="text-white mt-11">
+                            <table className="table-auto border-collapse w-full text-emerald-600">
+                                <thead className=''>
+                                    <tr>
+                                        <th className="pl-5 py-3 border-2"><User size={30} /></th>
+                                        <th><CarProfile size={30} /></th>
+                                        <th><CalendarPlus size={30} /></th>
+                                        <th><CalendarX size={30} /></th>
+                                        <th><MapPin size={30} /></th>
+                                        <th><MagnifyingGlass size={30} /></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {marcacoes_dia.map((e, index) => {
+                                        let par = false
+                                        if (index % 2 === 0) {
+                                            par = true
+                                        }
+                                        return (
+                                            <tr key={e.placa} className={"text-white border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
+                                                <td className="pl-5 py-2">{e.usuario.nome_completo}</td>
+                                                <td>{e.carro.marca + " " + e.carro.modelo + " - " + e.carro.placa + " - " + e.carro.identificacao}</td>
+                                                <td>{e.data_inicio}</td>
+                                                <td>{e.data_fim}</td>
+                                                <td>{e.destino}</td>
+                                                <td>{e.observacao}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                         <Dialog.Close />
                     </Dialog.Content>
                 </Dialog.Portal>
