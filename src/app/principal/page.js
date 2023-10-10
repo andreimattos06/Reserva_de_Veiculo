@@ -7,12 +7,13 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import InputMask from 'react-input-mask';
-import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple, User, CalendarPlus, CalendarX, CarProfile, MapPin } from '@phosphor-icons/react'
+import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple, User, AirplaneTakeoff, AirplaneLanding, CarProfile, MapPin } from '@phosphor-icons/react'
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js';
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import Loading from '../components/loading.js'
+import { dateToLocalDate } from '../util/datetolocaldate.js';
 
 
 export default function Principal() {
@@ -66,6 +67,15 @@ export default function Principal() {
         setPrimeiroDia(new Date(ano, mes, 1).getDay())
 
     }, [])
+
+    useEffect(() => {
+        setLoading()
+        if (status === "authenticated"){
+            setEmpresa(session?.user.empresa[0].id)
+            setLoading(false)
+        }
+        
+    },[status])
 
     //Use Effect usado para atualizar o primeiro dia o mês quando houver mudança na data.
     useEffect(() => {
@@ -292,7 +302,7 @@ export default function Principal() {
                     <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed" />
                     <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-3/12 bg-black border-2 border-emerald-600 rounded-md py-10 px-10">
                         <Dialog.Title className="text-white text-2xl font-bold">
-                            Nova Marcação
+                            Nova Reserva
                         </Dialog.Title>
                         <form>
                             <div className="grid grid-cols1 text-white pt-8 gap-5 font-semibold">
@@ -383,15 +393,15 @@ export default function Principal() {
                     <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed" />
                     <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 bg-black border-2 border-emerald-600 rounded-md px-10">
                         <div className="text-white mt-11">
-                            <table className="table-auto border-collapse w-full text-emerald-600">
-                                <thead className=''>
+                            <table className="table-auto border-collapse w-full text-emerald-600 text-center">
+                                <thead>
                                     <tr>
-                                        <th className="pl-5 py-3 border-2"><User size={30} /></th>
-                                        <th><CarProfile size={30} /></th>
-                                        <th><CalendarPlus size={30} /></th>
-                                        <th><CalendarX size={30} /></th>
-                                        <th><MapPin size={30} /></th>
-                                        <th><MagnifyingGlass size={30} /></th>
+                                        <th> <div className="flex justify-center pb-5"><User size={30} /></div></th>
+                                        <th><div className='flex justify-center pb-5'><CarProfile size={30} /></div></th>
+                                        <th><div className='flex justify-center pb-5'><AirplaneTakeoff size={30} /></div></th>
+                                        <th><div className='flex justify-center pb-5'><AirplaneLanding size={30} /></div></th>
+                                        <th><div className='flex justify-center pb-5'><MapPin size={30} /></div></th>
+                                        <th><div className='flex justify-center pb-5'><MagnifyingGlass size={30} /></div></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -402,12 +412,12 @@ export default function Principal() {
                                         }
                                         return (
                                             <tr key={e.placa} className={"text-white border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
-                                                <td className="pl-5 py-2">{e.usuario.nome_completo}</td>
-                                                <td>{e.carro.marca + " " + e.carro.modelo + " - " + e.carro.placa + " - " + e.carro.identificacao}</td>
-                                                <td>{e.data_inicio}</td>
-                                                <td>{e.data_fim}</td>
-                                                <td>{e.destino}</td>
-                                                <td>{e.observacao}</td>
+                                                <td className="py-5">{e.usuario.nome_completo}</td>
+                                                <td className="py-5">{e.carro.marca + " " + e.carro.modelo + " - " + e.carro.placa + " - " + e.carro.identificacao}</td>
+                                                <td className="py-5">{dateToLocalDate(e.data_inicio)}</td>
+                                                <td className="py-5">{dateToLocalDate(e.data_fim)}</td>
+                                                <td className="py-5">{e.destino}</td>
+                                                <td className="py-5">{e.observacao}</td>
                                             </tr>
                                         )
                                     })}

@@ -2,7 +2,7 @@
 
 import * as Avatar from '@radix-ui/react-avatar';
 import ButtonSide from './buttonside.js'
-import { UserCircleGear, CarSimple, UsersFour, CalendarBlank, SignOut } from '@phosphor-icons/react'
+import { UserCircleGear, CarSimple, UsersFour, CalendarBlank, SignOut, Briefcase  } from '@phosphor-icons/react'
 import Link from 'next/link.js';
 import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
@@ -36,6 +36,9 @@ export default function Sidebar(props) {
                         </Link>
                         <Link href="/dadosdaconta">
                             <ButtonSide texto="Dados da Conta" icon={<UserCircleGear size={22} />} />
+                        </Link>
+                        <Link href="/minhasmarcacoes">
+                            <ButtonSide texto="Minhas Reservas" icon={<Briefcase  size={22} />} />
                         </Link>
 
 

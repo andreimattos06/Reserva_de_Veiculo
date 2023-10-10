@@ -49,6 +49,15 @@ export default function Usuarios() {
     }, [])
 
     useEffect(() => {
+        setLoading()
+        if (status === "authenticated"){
+            setEmpresa(session?.user.empresa[0].id)
+            setLoading(false)
+        }
+        
+    },[status])
+
+    useEffect(() => {
         setLoading(true)
         async function getData() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getusers"}`, {
