@@ -9,6 +9,7 @@ export const authOptions = {
         session.user.nome_completo = token.nome_completo
         session.user.administrador = token.administrador
         session.user.empresa = token.empresa
+        session.user.token = token.token
       }
 
 
@@ -19,9 +20,17 @@ export const authOptions = {
         token.nome_completo = user.nome_completo
         token.administrador = user.administrador
         token.empresa = user.empresa
+        token.token = user.token
       }
       return token
     }
+  },
+  session:{
+    strategy: "jwt",
+    maxAge: 15 * 60,
+  },
+  jwt:{
+    maxAge: 15 * 60,
   },
   providers: [
     CredentialsProvider({

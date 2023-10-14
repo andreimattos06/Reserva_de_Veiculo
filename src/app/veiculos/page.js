@@ -13,6 +13,7 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
 import Loading from '../components/loading.js';
+import { redirect } from 'next/navigation'
 
 export default function Veiculos() {
     const [empresa, setEmpresa] = useState("")
@@ -56,7 +57,7 @@ export default function Veiculos() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
                 method: 'POST',
                 body: JSON.stringify({ empresaid: empresa }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
             setListaVeiculos(result)
@@ -95,7 +96,7 @@ export default function Veiculos() {
                 identificacao: dados_veiculo.identificacao,
 
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -121,7 +122,7 @@ export default function Veiculos() {
                 placa: dados_veiculo.placa,
                 identificacao: dados_veiculo.identificacao,
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -143,7 +144,7 @@ export default function Veiculos() {
             body: JSON.stringify({
                 id: delete_id,
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -171,7 +172,7 @@ export default function Veiculos() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdadosveiculo"}`, {
             method: 'POST',
             body: JSON.stringify({ id: id }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setDadosVeiculo({ ...result })

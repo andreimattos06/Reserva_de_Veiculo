@@ -43,7 +43,7 @@ export default function MinhasMarcacoes() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getreservas"}`, {
                 method: 'POST',
                 body: JSON.stringify({ email: session?.user?.email }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
             setListaMarcacoes(result)
@@ -52,6 +52,7 @@ export default function MinhasMarcacoes() {
         getData()
 
     }, [empresa])
+
     async function submitDelete(id) {
         setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/deleteveiculo"}`, {
@@ -59,7 +60,7 @@ export default function MinhasMarcacoes() {
             body: JSON.stringify({
                 id: delete_id,
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -74,10 +75,7 @@ export default function MinhasMarcacoes() {
         }
     }
 
-    
-
-
-
+ 
     return (
         <div className="flex flex-row">
             <Sidebar />

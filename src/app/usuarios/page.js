@@ -18,6 +18,7 @@ import Loading from '../components/loading.js'
 
 
 export default function Usuarios() {
+    
 
     const [empresa, setEmpresa] = useState("")
     const [lista_users, setListaUser] = useState([])
@@ -37,14 +38,12 @@ export default function Usuarios() {
     })
 
 
-    const { data: session, status } = useSession()
+    const { data: session, status} = useSession()
     if (status === "unauthenticated" || session?.user?.administrador === false) {
         redirect("/", "replace")
     }
-
     useEffect(() => {
-        setEmpresa(session?.user.empresa[0].id)
-        
+        setEmpresa(session?.user.empresa[0].id)        
 
     }, [])
 
@@ -63,7 +62,7 @@ export default function Usuarios() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getusers"}`, {
                 method: 'POST',
                 body: JSON.stringify({ empresaid: empresa }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
             setListaUser(result)
@@ -106,7 +105,7 @@ export default function Usuarios() {
                     administrador: dados_usuario.administrador,
                     senha: dados_usuario.senha
                 }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
             setLoading(false)
@@ -134,7 +133,7 @@ export default function Usuarios() {
                     cargo: dados_usuario.cargo,
                     administrador: dados_usuario.administrador
                 }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
             setLoading(false)
@@ -156,7 +155,7 @@ export default function Usuarios() {
             body: JSON.stringify({
                 id: delete_id,
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -184,7 +183,7 @@ export default function Usuarios() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdadosusers"}`, {
                 method: 'POST',
                 body: JSON.stringify({ id: id }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
         setDadosUsuario({...result})

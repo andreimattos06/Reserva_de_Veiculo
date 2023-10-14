@@ -9,6 +9,8 @@ import Button from "../components/button"
 import { ArrowsClockwise } from '@phosphor-icons/react'
 import { signOut } from "next-auth/react"
 import Loading from '../components/loading.js'
+import { NextApiRequest, NextApiResponse } from "next"
+import { get } from "http"
 
 export default function DadosDaContal() {
 
@@ -16,7 +18,7 @@ export default function DadosDaContal() {
     if (status === "unauthenticated") {
         redirect("/", "replace")
     }
-
+    
     const [iguais, setIguais] = useState(true)
     const [loading, setLoading] = useState(false)
     const [senhas, setSenhas] = useState({
@@ -24,7 +26,6 @@ export default function DadosDaContal() {
         senhanova: "",
         confirmacao: "",
     })
-
     const [dados, setDados] = useState({
         email: "",
         nome_completo: "",
@@ -33,21 +34,19 @@ export default function DadosDaContal() {
         setor: "",
         id: "",
     })
-
     useEffect(() => {
         setLoading(true)
         const fetchData = async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdados"}`, {
                 method: 'POST',
                 body: JSON.stringify({ email: session?.user.email }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
-            const result = await res.json();
+            const result = await res.json();            
             setDados(result)
             setLoading(false)
         }
         fetchData()
-
 
     }, [])
 
@@ -72,7 +71,7 @@ export default function DadosDaContal() {
                 setor: dados.setor,
                 id: dados.id
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -97,7 +96,7 @@ export default function DadosDaContal() {
                     senhanova: senhas.senhanova,
                     id: dados.id
                 }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
             })
             const result = await res.json();
 
@@ -124,7 +123,7 @@ export default function DadosDaContal() {
                     <div className="grid grid-cols-1 font-semibold pt-10 gap-5 ">
                         <div className="flex flex-col">
                             <span>Nome Completo:</span>
-                            <InputAlt value={dados.nome_completo} onChange={(e) => { setDados({ ...dados, nome_completo: e.target.value }) }} />
+                            <InputAlt value={dados?.nome_completo} onChange={(e) => { setDados({ ...dados, nome_completo: e.target.value }) }} />
                         </div>
 
                         <div className="flex flex-col">

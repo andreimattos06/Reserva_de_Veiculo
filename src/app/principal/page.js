@@ -14,6 +14,7 @@ import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import Loading from '../components/loading.js'
 import { dateToLocalDate } from '../util/datetolocaldate.js';
+import { hourValidate } from '../util/hourvalidate.js';
 
 
 export default function Principal() {
@@ -26,6 +27,7 @@ export default function Principal() {
     const [dia, setDia] = useState()
     const [loading, setLoading] = useState(false)
     const [edit, setEdit] = useState(true)
+    const [open_toast, setOpenToast] = useState(false)
     const [ano, setAno] = useState(new Date().getFullYear())
     const [mes, setMes] = useState(new Date().getMonth() + 1)
     const [dialog, setDialog] = useState(false)
@@ -70,12 +72,12 @@ export default function Principal() {
 
     useEffect(() => {
         setLoading()
-        if (status === "authenticated"){
+        if (status === "authenticated") {
             setEmpresa(session?.user.empresa[0].id)
             setLoading(false)
         }
-        
-    },[status])
+
+    }, [status])
 
     //Use Effect usado para atualizar o primeiro dia o mês quando houver mudança na data.
     useEffect(() => {
@@ -126,7 +128,7 @@ export default function Principal() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
             method: 'POST',
             body: JSON.stringify({ empresaid: empresa }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const veiculos = await res.json();
 
@@ -137,7 +139,7 @@ export default function Principal() {
                 ultimodia: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno[0], nova_marcacao.hora_retorno[1], ":", nova_marcacao.hora_retorno[3], nova_marcacao.hora_retorno[4], ":00", ".000Z")),
                 primeirodia: new Date("".concat(ano, "-", mes, "-", dia, "T", nova_marcacao.hora_partida[0], nova_marcacao.hora_partida[1], ":", nova_marcacao.hora_partida[3], nova_marcacao.hora_partida[4], ":00", ".000Z")),
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const veiculos_indisponiveis = await res2.json();
 
@@ -191,18 +193,18 @@ export default function Principal() {
         setDialog(true)
     }
 
-    async function showDialogMarcacoes(dia){
-        if (dia < 10){
+    async function showDialogMarcacoes(dia) {
+        if (dia < 10) {
             dia = "0" + dia
         }
         setLoading(true)
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getmarcacoesdia"}`, {
             method: 'POST',
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 empresa: empresa,
                 data: ano + "-" + mes + "-" + dia
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setMarcacoesDia(result)
@@ -224,7 +226,7 @@ export default function Principal() {
                 email: session?.user.email,
                 empresa: empresa,
             }),
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
         })
         const result = await res.json();
         setLoading(false)
@@ -238,7 +240,6 @@ export default function Principal() {
             alert("Houve um erro.")
         }
     }
-    console.log(marcacoes_dia)
     return (
         <>
             <div className="flex flex-row">
@@ -316,15 +317,15 @@ export default function Principal() {
                                     <span>Data e Hora da Partida:</span>
                                     <div />
                                     <InputAlt css=" text-gray-500" mask="99/99/9999" maskChar=" " disabled value={nova_marcacao.data_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_partida: e.target.value })} />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar=" " placeholder="08:00" value={nova_marcacao.hora_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_partida: e.target.value })} />
+                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar="0" placeholder="08:00" value={nova_marcacao.hora_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_partida: hourValidate(e.target.value) })} />
 
                                 </div>
 
                                 <div className="grid grid-cols-2">
                                     <span>Data e Hora do Retorno:</span>
                                     <div />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99/99/9999" maskChar=" " placeholder="01/01/2023" value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar=" " placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: e.target.value })} />
+                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99/99/9999" maskChar="0" placeholder="01/01/2023" value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
+                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar="0" placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: hourValidate(e.target.value) })} />
                                 </div>
 
                                 <div className='flex'>
@@ -438,3 +439,4 @@ export default function Principal() {
         </>
     )
 }
+
