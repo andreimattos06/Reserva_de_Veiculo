@@ -38,12 +38,13 @@ export default function Usuarios() {
     })
 
 
-    const { data: session, status} = useSession()
+    const { data: session, status, update} = useSession()
     if (status === "unauthenticated" || session?.user?.administrador === false) {
         redirect("/", "replace")
     }
     useEffect(() => {
-        setEmpresa(session?.user.empresa[0].id)        
+        setEmpresa(session?.user.empresa[0].id)  
+        update()      
 
     }, [])
 

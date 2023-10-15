@@ -9,8 +9,6 @@ import Button from "../components/button"
 import { ArrowsClockwise } from '@phosphor-icons/react'
 import { signOut } from "next-auth/react"
 import Loading from '../components/loading.js'
-import { NextApiRequest, NextApiResponse } from "next"
-import { get } from "http"
 
 export default function DadosDaContal() {
 
@@ -18,7 +16,6 @@ export default function DadosDaContal() {
     if (status === "unauthenticated") {
         redirect("/", "replace")
     }
-    
     const [iguais, setIguais] = useState(true)
     const [loading, setLoading] = useState(false)
     const [senhas, setSenhas] = useState({
@@ -75,7 +72,6 @@ export default function DadosDaContal() {
         })
         const result = await res.json();
         setLoading(false)
-        console.log(result)
         if (result === "sucesso") {
             alert("Dados atualizados com sucesso.")
             signOut({ callbackUrl: "/" })
