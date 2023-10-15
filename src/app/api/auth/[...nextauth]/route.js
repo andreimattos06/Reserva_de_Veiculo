@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { signOut } from "next-auth/react"
 
-export const authOptions = {
+const authOptions = {
   callbacks: {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
