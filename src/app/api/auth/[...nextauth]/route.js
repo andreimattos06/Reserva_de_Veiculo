@@ -59,7 +59,6 @@ export const authOptions = {
 
     }
   },
-
   session: {
     strategy: "jwt",
     maxAge: 15 * 60,
@@ -96,6 +95,6 @@ export const authOptions = {
 
 }
 
-export const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
