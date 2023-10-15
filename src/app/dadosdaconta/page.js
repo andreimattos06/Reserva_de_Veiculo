@@ -16,6 +16,7 @@ export default function DadosDaContal() {
     if (status === "unauthenticated") {
         redirect("/", "replace")
     }
+
     const [iguais, setIguais] = useState(true)
     const [loading, setLoading] = useState(false)
     const [senhas, setSenhas] = useState({
