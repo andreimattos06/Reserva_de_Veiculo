@@ -15,6 +15,10 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
 import Loading from '../components/loading.js'
+import RequiredInput from "../components/requiredinput.js";
+import CpfInput from "../components/cpfinput.js";
+import PasswordInput from "../components/passwordinput.js";
+import EmailInput from "../components/emailinput.js";
 
 
 export default function Usuarios() {
@@ -36,6 +40,15 @@ export default function Usuarios() {
         senha: "",
         administrador: false
     })
+    const [inputs_validation, setInputsValidation] = useState({
+        email: false,
+        nome_completo: false,
+        cpf: false,
+        cargo: false,
+        setor: false,
+        senha: false,
+    })
+
 
 
     const { data: session, status, update} = useSession()
@@ -193,6 +206,11 @@ export default function Usuarios() {
         
     }
 
+    function validateInputChange(nome_input, isValid) {
+        setInputsValidation({ ...inputs_validation, [nome_input]: isValid })
+    }
+
+
 
     return (
         <div className="flex flex-row">
@@ -278,35 +296,35 @@ export default function Usuarios() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Nome Completo:</span>
-                                    <InputAlt value={dados_usuario.nome_completo} onChange={(e) => setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} value={dados_usuario?.nome_completo} onChange={(e) => { setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value }) }} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>E mail:</span>
-                                    <InputAlt value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
+                                    <EmailInput onValidateChange={(isValid) => validateInputChange("email", isValid)} value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>CPF:</span>
-                                    <InputAlt value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
+                                    <CpfInput onValidateChange={(isValid) => validateInputChange("cpf", isValid)} value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
                                 </div>
 
                                 {adicionarUser ?
                                     <div className="grid grid-cols-1">
                                         <span>Senha:</span>
-                                        <InputAlt type="" value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
+                                        <PasswordInput onValidateChange={(isValid) => validateInputChange("password", isValid)} value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
                                     </div>
                                                 : ""}
 
 
                                 <div className="grid grid-cols-1">
                                     <span>Setor:</span>
-                                    <InputAlt value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("setor", isValid)} value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Cargo:</span>
-                                    <InputAlt value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("cargo", isValid)} value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
                                 </div>
 
 

@@ -29,7 +29,7 @@ export default function PasswordInput(props) {
         <div className="flex w-full flex-col">
             <div className="flex w-full justify-between items-center border-[1px] rounded-md border-emerald-600 font-normal p-2">
                 <InputMask {...props} type={visible ? "" : "password"} onBlur={validate} className={"bg-black focus:outline-none font-normal w-full" + props.css}></InputMask>
-                <button className="ml-2 text-emerald-600 hover:animate-pulse" onClick={(e) => setVisible(!visible)}>
+                <button type="button" className="ml-2 text-emerald-600 hover:animate-pulse" onClick={(e) => setVisible(!visible)}>
                     {visible ?
                     <EyeClosed size={24} /> :
                     <Eye size={24} />

@@ -5,7 +5,7 @@ import Sidebar from "../components/sidebar"
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import Button from "../components/button"
-import { ArrowsClockwise, PencilSimple, PaperPlaneTilt } from '@phosphor-icons/react'
+import { ArrowsClockwise, PencilSimple, PaperPlaneTilt, LockSimple } from '@phosphor-icons/react'
 import { signOut } from "next-auth/react"
 import Loading from '../components/loading.js'
 import EmailInput from "../components/emailinput"
@@ -24,6 +24,8 @@ export default function DadosDaContal() {
     const [iguais, setIguais] = useState(true)
     const [edit, setEdit] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [valid, setValid] = useState(true)
+    const [valid_pass, setValidPass] = useState(false)
     const [senhas, setSenhas] = useState({
         senhaantiga: "",
         senhanova: "",
@@ -61,6 +63,7 @@ export default function DadosDaContal() {
         fetchData()
 
     }, [])
+
     useEffect(() => {
         if (senhas.senhanova != senhas.confirmacao) {
             setIguais(false)
@@ -68,8 +71,21 @@ export default function DadosDaContal() {
         else {
             setIguais(true)
         }
+
     }, [senhas.senhanova, senhas.confirmacao])
 
+    useEffect(() => {
+        if (senhas.senhaantiga != "" && iguais){
+            setValidPass(true)
+        }
+        else{
+            setValidPass(false)
+        }
+    }, [iguais, senhas.senhaantiga])
+
+    useEffect(() => {
+        setValid(validateAllInputs(inputs_validation))
+    },[inputs_validation])
     async function atualizacaoDados() {
         if (validateAllInputs(inputs_validation)) {
             setLoading(true)
@@ -99,7 +115,7 @@ export default function DadosDaContal() {
 
     async function atualizacaoSenha() {
 
-        if (iguais) {
+        if (valid_pass) {
             const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatesenha"}`, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -165,7 +181,7 @@ export default function DadosDaContal() {
 
                         <div className="justify-self-end">
                             {edit ?
-                                <Button onClick={atualizacaoDados} texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                <Button onClick={atualizacaoDados} texto="Enviar" icon={valid ? <PaperPlaneTilt size={24} /> : <LockSimple size={24} />} />
                                 :
                                 <Button onClick={() => setEdit(true)} texto="Editar" icon={<PencilSimple size={24} />} />
                             }
@@ -203,7 +219,7 @@ export default function DadosDaContal() {
                             </div>
 
                             <div className="self-end">
-                                <Button onClick={atualizacaoSenha} texto="Alterar Senha" icon={<ArrowsClockwise size={24} />} />
+                                <Button onClick={atualizacaoSenha} texto="Alterar Senha"  icon={valid_pass ? <ArrowsClockwise size={24} /> : <LockSimple size={24} />} />
                             </div>
 
                         </div>
