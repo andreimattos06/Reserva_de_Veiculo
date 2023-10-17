@@ -24,7 +24,7 @@ export default function EmailInput(props) {
     }
 
     useEffect(() => {
-        props.onValidateChange(valid)
+        props?.onValidateChange(valid)
     },[valid])
 
     return (

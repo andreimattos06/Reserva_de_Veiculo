@@ -17,7 +17,7 @@ export default function RequiredInput(props) {
     }
 
     useEffect(() => {
-        props.onValidateChange(valid)
+        props?.onValidateChange(valid)
     }, [valid])
 
 

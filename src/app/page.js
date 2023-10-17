@@ -1,14 +1,16 @@
 'use client'
 
-import Input from './components/input.js';
-import { Key, User, SignIn } from '@phosphor-icons/react'
+import { LockSimple, SignIn } from '@phosphor-icons/react'
 import Button from './components/button.js';
 import Link from 'next/link.js';
 import { signIn } from "next-auth/react"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import Loading from './components/loading.js'
+import EmailInput from './components/emailinput.js'
+import PasswordInput from './components/passwordinput.js'
+import { validateAllInputs } from './util/validateallinputs.js'
 
 
 export default function Home() {
@@ -16,13 +18,45 @@ export default function Home() {
   const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
+  const [valid, setValid] = useState()
   const [errada, setErrada] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [inputs_validation, setInputsValidation] = useState({
+    email: true,
+    password: true,
+
+  })
+
+  useEffect(() => {
+    setValid(validateAllInputs(inputs_validation))
+  }, [inputs_validation])
+
+
+  function validateInputChange(nome_input, isValid) {
+    setInputsValidation({ ...inputs_validation, [nome_input]: isValid })
+  }
+
+  async function login() {
+    if (valid) {
+      setLoading(true)
+      signIn("credentials", {redirect:false, email, senha, }).then(({ok}) => {
+        if(ok){
+          setErrada(true)
+          setLoading(false)
+        }
+        else{
+          setLoading(false)
+        }
+      })
+    }
+    
+
+  }
 
   if (status === "authenticated") {
     redirect("/principal", "replace")
   }
-
+ 
   return (
     <>
       <div className='flex justify-center items-center h-screen w-screen text-white font-semibold tracking-wide'>
@@ -32,23 +66,16 @@ export default function Home() {
               <span>Dados do Login</span>
             </div>
             <h1>E mail:</h1>
-            <Input icon={<User size={24} />} onChange={(target) => setEmail(target.target.value)} />
+            <EmailInput valid={true} onValidateChange={(isValid) => validateInputChange("email", isValid)} value={email} onChange={(target) => setEmail(target.target.value)} />
 
             <h1 className='pt-5'>Senha:</h1>
-            <Input type="password" icon={<Key size={24} />} onChange={(target) => setSenha(target.target.value)} />
+            <PasswordInput valid={true} onValidateChange={(isValid) => validateInputChange("password", isValid)} value={senha} onChange={(target) => setSenha(target.target.value)} />
 
             <a className='text-sm font-normal'>Esqueceu a senha?</a>
 
-            {errada ? <span className='text-white'>O e mail ou a senha informado estão incorretos</span> : <></>}
+            {errada ? <span className='text-white text-sm bg-red-800 px-1 rounded-md animate-bounce w-4/5 mt-1'>O e-mail e/ou a senha informada estão incorretos!</span> : <></>}
 
-            <Link href={"/principal"}>
-              <Button texto="Logar" icon={<SignIn size={24} />} css="mt-5" onClick={() => {
-                setLoading(true), signIn("credentials", { email, senha, redirect: false })
-                  .then((error) => {
-                    setErrada(true)
-                  })
-              }} />
-            </Link>
+            <Button type="button" texto="Logar" icon={valid ? <SignIn size={24} /> : <LockSimple size={24} />} css="mt-5" onClick={login} /> 
 
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function Sidebar(props) {
 
 
     return (
-        <div className="bg-gradient-to-br from-emerald-300 to-emerald-950">
+        <div className="bg-gradient-to-br from-emerald-300 to-emerald-950 h-screen">
             <div className="h-full w-fit bg-black flex justify-center mr-[2px]">
                 <div className="flex flex-col">
                     <div className="px-5 py-5 flex flex-col items-center justify-center text-white gap-5 border-b-[1px] border-zinc-700 text-center">

@@ -21,9 +21,12 @@ export default function PasswordInput(props) {
         }
     }
 
-    //    useEffect(() => {
-    //        props.onValidateChange(valid)
-    //    },[valid])
+        useEffect(() => {
+            if (props?.onValidateChange){
+                props?.onValidateChange(valid)
+            }
+            
+        },[valid])
 
     return (
         <div className="flex w-full flex-col">

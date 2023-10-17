@@ -86,6 +86,7 @@ export default function DadosDaContal() {
     useEffect(() => {
         setValid(validateAllInputs(inputs_validation))
     },[inputs_validation])
+    
     async function atualizacaoDados() {
         if (validateAllInputs(inputs_validation)) {
             setLoading(true)
