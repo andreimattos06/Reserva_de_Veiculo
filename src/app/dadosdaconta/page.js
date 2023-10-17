@@ -157,27 +157,27 @@ export default function DadosDaContal() {
                     <div className="grid grid-cols-1 font-semibold pt-10 gap-5 ">
                         <div className="flex flex-col">
                             <span>Nome Completo:</span>
-                            <RequiredInput valid={true} onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados?.nome_completo} onChange={(e) => { setDados({ ...dados, nome_completo: e.target.value }) }} />
+                            <RequiredInput onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados?.nome_completo} onChange={(e) => { setDados({ ...dados, nome_completo: e.target.value }) }} />
                         </div>
 
                         <div className="flex flex-col">
                             <span>E-mail:</span>
-                            <EmailInput valid={true} onValidateChange={(isValid) => validateInputChange("email", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados?.email} onChange={(e) => { setDados({ ...dados, email: e.target.value }) }} />
+                            <EmailInput onValidateChange={(isValid) => validateInputChange("email", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados?.email} onChange={(e) => { setDados({ ...dados, email: e.target.value }) }} />
                         </div>
 
                         <div className="flex flex-col">
                             <span>CPF:</span>
-                            <CpfInput valid={true} onValidateChange={(isValid) => validateInputChange("cpf", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.cpf} onChange={(e) => { setDados({ ...dados, cpf: e.target.value }) }} />
+                            <CpfInput onValidateChange={(isValid) => validateInputChange("cpf", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.cpf} onChange={(e) => { setDados({ ...dados, cpf: e.target.value }) }} />
                         </div>
 
                         <div className="flex flex-col">
                             <span>Cargo:</span>
-                            <RequiredInput valid={true} onValidateChange={(isValid) => validateInputChange("cargo", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.cargo} onChange={(e) => { setDados({ ...dados, cargo: e.target.value }) }} />
+                            <RequiredInput onValidateChange={(isValid) => validateInputChange("cargo", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.cargo} onChange={(e) => { setDados({ ...dados, cargo: e.target.value }) }} />
                         </div>
 
                         <div className="flex flex-col">
                             <span>Setor:</span>
-                            <RequiredInput valid={true} onValidateChange={(isValid) => validateInputChange("setor", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.setor} onChange={(e) => { setDados({ ...dados, setor: e.target.value }) }} />
+                            <RequiredInput onValidateChange={(isValid) => validateInputChange("setor", isValid)} disabled={!edit} css={edit ? "" : " text-gray-500"} value={dados.setor} onChange={(e) => { setDados({ ...dados, setor: e.target.value }) }} />
                         </div>
 
                         <div className="justify-self-end">

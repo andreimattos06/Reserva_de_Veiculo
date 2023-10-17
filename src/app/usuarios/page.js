@@ -337,23 +337,23 @@ export default function Usuarios() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Nome Completo:</span>
-                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} value={dados_usuario?.nome_completo} onChange={(e) => { setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value }) }} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} value={dados_usuario?.nome_completo} onChange={(e) => { setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value }) }} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>E-mail:</span>
-                                    <EmailInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("email", isValid)} value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
+                                    <EmailInput onValidateChange={(isValid) => validateInputChange("email", isValid)} value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>CPF:</span>
-                                    <CpfInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("cpf", isValid)} value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
+                                    <CpfInput onValidateChange={(isValid) => validateInputChange("cpf", isValid)} value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
                                 </div>
 
                                 {adicionarUser ?
                                     <div className="grid grid-cols-1">
                                         <span>Senha:</span>
-                                        <PasswordInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("password", isValid)} value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
+                                        <PasswordInput onValidateChange={(isValid) => validateInputChange("password", isValid)} value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
                                     </div>
                                     :
                                     <></>
@@ -362,12 +362,12 @@ export default function Usuarios() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Setor:</span>
-                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("setor", isValid)} value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("setor", isValid)} value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Cargo:</span>
-                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("cargo", isValid)} value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("cargo", isValid)} value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
                                 </div>
 
                                 <div className="flex items-center gap-3">
