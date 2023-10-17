@@ -116,7 +116,6 @@ export default function Usuarios() {
 
 
     }, [dialog])
-
     function limparDadosUsuario() {
         setDadosUsuario({
             email: "",
