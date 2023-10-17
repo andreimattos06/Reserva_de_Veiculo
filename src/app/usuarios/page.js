@@ -88,28 +88,34 @@ export default function Usuarios() {
     }, [empresa])
 
     useEffect(() => {
-        if(!adicionarUser){
-            setInputsValidation({
-                email: false,
-                nome_completo: false,
-                cpf: false,
-                cargo: false,
-                setor: false,
-                password: false,
-            })
+        if (dialog) {
+            if (adicionarUser) {
+                setInputsValidation({
+                    email: false,
+                    nome_completo: false,
+                    cpf: false,
+                    cargo: false,
+                    setor: false,
+                    password: false,
+                })
+            }
+            else {
+                setInputsValidation({
+                    email: true,
+                    nome_completo: true,
+                    cpf: true,
+                    cargo: true,
+                    setor: true,
+                    password: true,
+                })
+            }
         }
-        else{
-            setInputsValidation({
-                email: true,
-                nome_completo: true,
-                cpf: true,
-                cargo: true,
-                setor: true,
-                password: true,
-            })
+        else {
+            setInputsValidation({})
         }
-        
-    },[dialog])
+
+
+    }, [dialog])
 
     function limparDadosUsuario() {
         setDadosUsuario({
@@ -130,32 +136,35 @@ export default function Usuarios() {
     }
 
     async function submitNovo() {
-        setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/adduser"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                empresaid: empresa,
-                nome_completo: dados_usuario.nome_completo,
-                email: dados_usuario.email,
-                cpf: dados_usuario.cpf,
-                setor: dados_usuario.setor,
-                cargo: dados_usuario.cargo,
-                administrador: dados_usuario.administrador,
-                senha: dados_usuario.senha
-            }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const result = await res.json();
-        setLoading(false)
+        if (valid) {
+            setLoading(true)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/adduser"}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    empresaid: empresa,
+                    nome_completo: dados_usuario.nome_completo,
+                    email: dados_usuario.email,
+                    cpf: dados_usuario.cpf,
+                    setor: dados_usuario.setor,
+                    cargo: dados_usuario.cargo,
+                    administrador: dados_usuario.administrador,
+                    senha: dados_usuario.senha
+                }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const result = await res.json();
+            setLoading(false)
 
-        if (result == "sucesso") {
-            alert("Cadastro adicionado com sucesso!")
-            location.reload()
+            if (result == "sucesso") {
+                alert("Cadastro adicionado com sucesso!")
+                location.reload()
+            }
+            else {
+                alert("Foram encontrados os seguintes erros: " + result)
+                location.reload()
+            }
         }
-        else {
-            alert("Foram encontrados os seguintes erros: " + result)
-            location.reload()
-        }
+
     }
 
     async function submitAlteracao() {
@@ -221,7 +230,7 @@ export default function Usuarios() {
     }
 
     async function getUsersInfo(id) {
-        setInputsValidation({...inputs_validation, password:true})
+        setInputsValidation({ ...inputs_validation, password: true })
         const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getdadosusers"}`, {
             method: 'POST',
             body: JSON.stringify({ id: id }),
@@ -242,7 +251,6 @@ export default function Usuarios() {
 
     useEffect(() => {
         setValid(validateAllInputs(inputs_validation))
-
     }, [inputs_validation])
 
     return (
@@ -329,36 +337,37 @@ export default function Usuarios() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Nome Completo:</span>
-                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} value={dados_usuario?.nome_completo} onChange={(e) => { setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value }) }} />
+                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("nome_completo", isValid)} value={dados_usuario?.nome_completo} onChange={(e) => { setDadosUsuario({ ...dados_usuario, nome_completo: e.target.value }) }} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>E-mail:</span>
-                                    <EmailInput onValidateChange={(isValid) => validateInputChange("email", isValid)} value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
+                                    <EmailInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("email", isValid)} value={dados_usuario.email} onChange={(e) => setDadosUsuario({ ...dados_usuario, email: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>CPF:</span>
-                                    <CpfInput onValidateChange={(isValid) => validateInputChange("cpf", isValid)} value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
+                                    <CpfInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("cpf", isValid)} value={dados_usuario.cpf} onChange={(e) => setDadosUsuario({ ...dados_usuario, cpf: e.target.value })} />
                                 </div>
 
                                 {adicionarUser ?
                                     <div className="grid grid-cols-1">
                                         <span>Senha:</span>
-                                        <PasswordInput onValidateChange={(isValid) => validateInputChange("password", isValid)} value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
+                                        <PasswordInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("password", isValid)} value={dados_usuario.senha} onChange={(e) => setDadosUsuario({ ...dados_usuario, senha: e.target.value })} />
                                     </div>
                                     :
-                                    <></>}
+                                    <></>
+                                }
 
 
                                 <div className="grid grid-cols-1">
                                     <span>Setor:</span>
-                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("setor", isValid)} value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
+                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("setor", isValid)} value={dados_usuario.setor} onChange={(e) => setDadosUsuario({ ...dados_usuario, setor: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Cargo:</span>
-                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("cargo", isValid)} value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
+                                    <RequiredInput valid={!adicionarUser} onValidateChange={(isValid) => validateInputChange("cargo", isValid)} value={dados_usuario.cargo} onChange={(e) => setDadosUsuario({ ...dados_usuario, cargo: e.target.value })} />
                                 </div>
 
                                 <div className="flex items-center gap-3">
@@ -372,6 +381,7 @@ export default function Usuarios() {
 
                             </div>
                         </form>
+
                         <Dialog.Close />
                     </Dialog.Content>
                 </Dialog.Portal>

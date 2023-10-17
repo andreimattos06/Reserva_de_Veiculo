@@ -6,27 +6,25 @@ import { cpfValidate } from "../util/cpfvalidate";
 
 export default function CpfInput(props) {
 
-    const [valid, setValid] = useState(props?.valid || false)
     const [erro, setErro] = useState()
 
     function validate(){
+        let valido = false
         if (props.value == ""){
-            setValid(false)
+            valido = false
             setErro("Preenchimento obrigatório!")
         }
         else if(props.value.length < 14 || (!cpfValidate(props.value))){
-            setValid(false)
+            valido = false
             setErro("CPF inválido!")            
         }
         else{
-            setValid(true)
+            valido = true
             setErro()
         }
+        props.onValidateChange(valido)
     }
 
-    useEffect(() => {
-        props.onValidateChange(valid)
-    },[valid])
 
     return (
         <div className="flex w-full flex-col">

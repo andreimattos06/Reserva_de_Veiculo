@@ -2,23 +2,22 @@ import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 
 export default function RequiredInput(props) {
-    const [valid, setValid] = useState(props?.valid || false)
     const [erro, setErro] = useState()
 
     function validate() {
+        let valido = false
         if (props.value == "") {
-            setValid(false)
+            valido = false
             setErro("Preenchimento obrigatório!")
         }
         else {
-            setValid(true)
+            valido = true
             setErro()
         }
+
+        props?.onValidateChange(valido)
     }
 
-    useEffect(() => {
-        props?.onValidateChange(valid)
-    }, [valid])
 
 
     return (

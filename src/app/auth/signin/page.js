@@ -5,7 +5,7 @@ import { Key, User, SignIn } from '@phosphor-icons/react'
 import Button from '../../components/button.js';
 import Link from 'next/link.js';
 import { signIn } from "next-auth/react"
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 
 export default function Home() {

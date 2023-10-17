@@ -6,7 +6,7 @@ import { Eye, EyeClosed } from '@phosphor-icons/react'
 
 export default function PasswordInput(props) {
 
-    const [valid, setValid] = useState(props?.valid || false)
+    const [valid, setValid] = useState(props?.valid)
     const [erro, setErro] = useState()
     const [visible, setVisible] = useState(false)
 

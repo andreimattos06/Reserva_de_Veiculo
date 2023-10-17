@@ -49,7 +49,6 @@ export default function Home() {
         }
       })
     }
-    
 
   }
 
@@ -66,10 +65,10 @@ export default function Home() {
               <span>Dados do Login</span>
             </div>
             <h1>E mail:</h1>
-            <EmailInput onValidateChange={(isValid) => validateInputChange("email", isValid)} value={email} onChange={(target) => setEmail(target.target.value)} />
+            <EmailInput valid={true} onValidateChange={(isValid) => validateInputChange("email", isValid)} value={email} onChange={(target) => setEmail(target.target.value)} />
 
             <h1 className='pt-5'>Senha:</h1>
-            <PasswordInput  onValidateChange={(isValid) => validateInputChange("password", isValid)} value={senha} onChange={(target) => setSenha(target.target.value)} />
+            <PasswordInput valid={true} onValidateChange={(isValid) => validateInputChange("password", isValid)} value={senha} onChange={(target) => setSenha(target.target.value)} />
 
             <a className='text-sm font-normal'>Esqueceu a senha?</a>
 

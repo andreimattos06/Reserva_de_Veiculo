@@ -5,27 +5,26 @@ import InputMask from 'react-input-mask';
 
 export default function EmailInput(props) {
 
-    const [valid, setValid] = useState(props?.valid || false)
     const [erro, setErro] = useState()
 
     function validate(){
-        if (props.value == ""){
-            setValid(false)
+        let valido = false
+        if (props?.value == ""){
+            valido = false
             setErro("Preenchimento obrigatório!")
         }
         else if(!props.value.endsWith("@sicredi.com.br")){
-            setValid(false)
+            valido = false
             setErro("E-mail inválido!")            
         }
         else{
-            setValid(true)
+            valido = true
             setErro()
         }
+        
+        props?.onValidateChange(valido)
     }
 
-    useEffect(() => {
-        props?.onValidateChange(valid)
-    },[valid])
 
     return (
         <div className="flex w-full flex-col">

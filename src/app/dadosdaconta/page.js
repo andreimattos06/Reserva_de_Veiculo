@@ -75,7 +75,7 @@ export default function DadosDaContal() {
     }, [senhas.senhanova, senhas.confirmacao])
 
     useEffect(() => {
-        if (senhas.senhaantiga != "" && iguais){
+        if (senhas.senhaantiga != "" && iguais && senhas.senhanova != "" && senhas.senhaantiga != ""){
             setValidPass(true)
         }
         else{
