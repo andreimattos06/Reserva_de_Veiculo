@@ -2,9 +2,8 @@
 
 import { LockSimple, SignIn } from '@phosphor-icons/react'
 import Button from './components/button.js';
-import Link from 'next/link.js';
 import { signIn } from "next-auth/react"
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import Loading from './components/loading.js'
@@ -18,7 +17,7 @@ export default function Home() {
   const { data: session, status } = useSession()
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
-  const [valid, setValid] = useState()
+  const [valid, setValid] = useState(true)
   const [errada, setErrada] = useState(false)
   const [loading, setLoading] = useState(false)
   const [inputs_validation, setInputsValidation] = useState({
@@ -31,6 +30,9 @@ export default function Home() {
     setValid(validateAllInputs(inputs_validation))
   }, [inputs_validation])
 
+  useEffect(() => {
+    setInputsValidation({email: true, password: true})
+  },[])
 
   function validateInputChange(nome_input, isValid) {
     setInputsValidation({ ...inputs_validation, [nome_input]: isValid })
