@@ -244,7 +244,7 @@ export default function Usuarios() {
         setValid(validateAllInputs(inputs_validation))
 
     }, [inputs_validation])
-    console.log(inputs_validation)
+
     return (
         <div className="flex flex-row">
             <Sidebar />

@@ -13,11 +13,6 @@ export default function Home() {
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
 
-  useEffect(() => {
-    console.log(senha, email)
-
-  },[email, senha])
-
   return (
     <>
       <div className='flex justify-center items-center h-screen w-screen text-white font-semibold tracking-wide'>
