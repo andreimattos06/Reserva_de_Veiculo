@@ -18,9 +18,13 @@ export default function DateInput(props) {
         let mes = props?.value.slice(3,5)
         let dia = props?.value.slice(0,2)
         let data_valida = isValidDate(ano, mes-1,dia)
-        if (props.value.length < 10 || props?.data_ref > props?.value || !data_valida) {
+        if (props.value.length < 10 || !data_valida) {
             valido = false
             setErro("Data Inválida!")
+        }
+        else if (props?.data_ref > props?.value){
+            valido = false
+            setErro("A data de retorno não pode ser menor que a data de partida!")
         }
         else {
             valido = true

@@ -116,7 +116,7 @@ export default function Usuarios() {
 
 
     }, [dialog])
-    
+
     function limparDadosUsuario() {
         setDadosUsuario({
             email: "",
@@ -299,23 +299,28 @@ export default function Usuarios() {
                             </tr>
                         </thead>
                         <tbody className="">
-                            {lista_users.map((e, index) => {
-                                let par = false
-                                if (index % 2 === 0) {
-                                    par = true
-                                }
-                                return (
-                                    <tr key={e.cpf} className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
-                                        <td className="px-5 py-2">{e.id}</td>
-                                        <td>{e.email}</td>
-                                        <td>{e.nome_completo}</td>
-                                        <td>{e.cpf}</td>
-                                        <td>{e.administrador ? "Sim" : "Não"}</td>
-                                        <td>{<Button onClick={() => { getUsersInfo(e.id) }} css="my-1" icon={<Pencil size={20} />} />}</td>
-                                        <td>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
-                                    </tr>
-                                )
-                            })}
+                            {lista_users.map
+                                ?
+                                lista_users.map((e, index) => {
+                                    let par = false
+                                    if (index % 2 === 0) {
+                                        par = true
+                                    }
+                                    return (
+                                        <tr key={e.cpf} className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
+                                            <td className="px-5 py-2">{e.id}</td>
+                                            <td>{e.email}</td>
+                                            <td>{e.nome_completo}</td>
+                                            <td>{e.cpf}</td>
+                                            <td>{e.administrador ? "Sim" : "Não"}</td>
+                                            <td>{<Button onClick={() => { getUsersInfo(e.id) }} css="my-1" icon={<Pencil size={20} />} />}</td>
+                                            <td>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
+                                        </tr>
+                                    )
+                                })
+                                :
+                                <></>
+                            }
                         </tbody>
 
                     </table>

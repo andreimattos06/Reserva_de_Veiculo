@@ -12,6 +12,7 @@ import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
 import Loading from '../components/loading.js';
 import { dateToLocalDate } from '../util/datetolocaldate.js';
+import { Suspense } from 'react'
 
 export default function MinhasMarcacoes() {
     const [empresa, setEmpresa] = useState("")
@@ -31,11 +32,11 @@ export default function MinhasMarcacoes() {
 
     useEffect(() => {
         setLoading()
-        if (status === "authenticated"){
+        if (status === "authenticated") {
             setEmpresa(session?.user.empresa[0].id)
             setLoading(false)
         }
-    },[status])
+    }, [status])
 
     useEffect(() => {
         setLoading(true)
@@ -75,7 +76,7 @@ export default function MinhasMarcacoes() {
         }
     }
 
- 
+
     return (
         <div className="flex flex-row">
             <Sidebar />
@@ -95,7 +96,7 @@ export default function MinhasMarcacoes() {
                                         {session?.user?.empresa.map((e, index) => {
                                             let aux = e.numero + " - " + e.nome
                                             return (
-                                                <Select.Item key={index+aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
+                                                <Select.Item key={index + aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
                                                     <Select.ItemText>{aux}</Select.ItemText>
                                                 </Select.Item>
                                             )
@@ -122,22 +123,27 @@ export default function MinhasMarcacoes() {
                             </tr>
                         </thead>
                         <tbody className="">
-                            {lista_marcacoes.map((e, index) => {
-                                let par = false
-                                if (index % 2 === 0) {
-                                    par = true
-                                }
-                                return (
-                                    <tr key={e+index} className={"border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
-                                        <td className="px-5 py-2">{dateToLocalDate(e.data_inicio)}</td>
-                                        <td>{dateToLocalDate(e.data_fim)}</td>
-                                        <td>{e.destino}</td>
-                                        <td>{e.carro.marca + " " + e.carro.modelo + " - " + e.carro.placa + " - " + e.carro.identificacao}</td>
-                                        <td>{e.observacao}</td>
-                                        <td className='py-1'>{<Button onClick={() => {setDeleteDialog(true), setDeleteID(e.id)}} icon={<Trash size={20} />} />}</td>
-                                    </tr>
-                                )
-                            })}
+                            {lista_marcacoes.map
+                                ?
+                                lista_marcacoes.map((e, index) => {
+                                    let par = false
+                                    if (index % 2 === 0) {
+                                        par = true
+                                    }
+                                    return (
+                                        <tr key={e + index} className={"border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
+                                            <td className="px-5 py-2">{dateToLocalDate(e.data_inicio)}</td>
+                                            <td>{dateToLocalDate(e.data_fim)}</td>
+                                            <td>{e.destino}</td>
+                                            <td>{e.carro.marca + " " + e.carro.modelo + " - " + e.carro.placa + " - " + e.carro.identificacao}</td>
+                                            <td>{e.observacao}</td>
+                                            <td className='py-1'>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
+                                        </tr>
+                                    )
+                                })
+                                :
+                                <></>
+                            }
                         </tbody>
 
                     </table>
@@ -153,7 +159,7 @@ export default function MinhasMarcacoes() {
                         <AlertDialog.Description className='font-semibold text-gray-300 pt-5'>Essa ação irá excluir o veiculo selecionado da base de dados assim como todas as marcações vinculadas a ele.</AlertDialog.Description>
                         <div className='flex pt-10 justify-end gap-5'>
                             <AlertDialog.Cancel>
-                                <CancelButton  texto="Cancelar" icon={<X size={32} />} />
+                                <CancelButton texto="Cancelar" icon={<X size={32} />} />
                             </AlertDialog.Cancel>
                             <AlertDialog.Action>
                                 <AlertButton onClick={submitDelete} texto="Confirmar" icon={<Check size={32} />} />

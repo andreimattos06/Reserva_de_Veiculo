@@ -10,6 +10,11 @@ export default function HourInput(props) {
             valido = false
             setErro("Horário Inválido!")
         }
+        else if (props.validar_data && props.hora_ref >= props.value){
+            valido = false
+            setErro("A hora de retorno não pode ser maior que a hora de partida!")
+        }
+
         else {
             valido = true
             setErro()

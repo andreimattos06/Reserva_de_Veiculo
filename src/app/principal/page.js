@@ -73,6 +73,12 @@ export default function Principal() {
     useEffect(() => {
         setEmpresa(session?.user.empresa[0].id)
         setPrimeiroDia(new Date(ano, mes, 1).getDay())
+        setInputsValidation({
+            destino: false,
+            hora_partida: false,
+            hora_retorno: false,
+            data_retorno:false,
+        })
 
     }, [])
 
@@ -331,13 +337,13 @@ export default function Principal() {
             <Dialog.Root open={dialog} onOpenChange={() => setDialog(false)} className="">
                 <Dialog.Trigger />
                 <Dialog.Portal>
-                    <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed" />
+                    <Dialog.Overlay className="bg-black opacity-80 inset-0 fixed overflow-y-clip" />
                     <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-3/12 bg-black border-2 border-emerald-600 rounded-md py-10 px-10">
                         <Dialog.Title className="text-white text-2xl font-bold">
                             Nova Reserva
                         </Dialog.Title>
                         <form>
-                            <div className="grid grid-cols1 text-white pt-8 gap-5 font-semibold">
+                            <div className="grid text-white pt-8 gap-5 font-semibold">
 
                                 <div className="grid grid-cols-1">
                                     <span>Destino:</span>
@@ -356,7 +362,7 @@ export default function Principal() {
                                     <span>Data e Hora do Retorno:</span>
                                     <div />
                                     <DateInput onValidateChange={(isValid) => validateInputChange("data_retorno", isValid)} data_ref={nova_marcacao.data_partida} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder={nova_marcacao.data_partida} value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
-                                    <HourInput onValidateChange={(isValid) => validateInputChange("hora_retorno", isValid)} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: hourValidate(e.target.value) })} />
+                                    <HourInput onValidateChange={(isValid) => validateInputChange("hora_retorno", isValid)} validar_data={(nova_marcacao.data_partida >= nova_marcacao.data_retorno)} hora_ref={nova_marcacao.hora_partida} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: hourValidate(e.target.value) })} />
                                 </div>
 
                                 <div className='flex'>

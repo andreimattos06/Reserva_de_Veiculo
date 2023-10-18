@@ -276,23 +276,27 @@ export default function Veiculos() {
                             </tr>
                         </thead>
                         <tbody className="">
-                            {lista_veiculos.map((e, index) => {
-                                let par = false
-                                if (index % 2 === 0) {
-                                    par = true
-                                }
-                                return (
-                                    <tr key={e.placa} className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
-                                        <td className="px-5 py-2">{e.id}</td>
-                                        <td>{e.marca}</td>
-                                        <td>{e.modelo}</td>
-                                        <td>{e.placa}</td>
-                                        <td>{e.identificacao}</td>
-                                        <td>{<Button onClick={() => { getVeiculoInfo(e.id) }} css="my-1" icon={<Pencil size={20} />} />}</td>
-                                        <td>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
-                                    </tr>
-                                )
-                            })}
+                            {lista_veiculos.map ?
+                                lista_veiculos.map((e, index) => {
+                                    let par = false
+                                    if (index % 2 === 0) {
+                                        par = true
+                                    }
+                                    return (
+                                        <tr key={e.placa} className={"cursor-pointer border-t-[1px] " + (par ? " border-emerald-600" : "border-emerald-900")}>
+                                            <td className="px-5 py-2">{e.id}</td>
+                                            <td>{e.marca}</td>
+                                            <td>{e.modelo}</td>
+                                            <td>{e.placa}</td>
+                                            <td>{e.identificacao}</td>
+                                            <td>{<Button onClick={() => { getVeiculoInfo(e.id) }} css="my-1" icon={<Pencil size={20} />} />}</td>
+                                            <td>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
+                                        </tr>
+                                    )
+                                })
+                                :
+                                <></>
+                            }
                         </tbody>
 
                     </table>
