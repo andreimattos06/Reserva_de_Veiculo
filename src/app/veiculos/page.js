@@ -7,13 +7,14 @@ import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import Button from "../components/button.js";
 import * as Dialog from '@radix-ui/react-dialog';
-import InputAlt from '../components/inputalt.js'
-import { Plus, Pencil, Trash, PaperPlaneTilt, Check, X } from '@phosphor-icons/react'
+import { Plus, Pencil, Trash, PaperPlaneTilt, Check, X, LockSimple } from '@phosphor-icons/react'
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
 import Loading from '../components/loading.js';
 import { redirect } from 'next/navigation'
+import RequiredInput from "../components/requiredinput.js";
+import { validateAllInputs } from "../util/validateallinputs.js";
 
 export default function Veiculos() {
     const [empresa, setEmpresa] = useState("")
@@ -21,6 +22,7 @@ export default function Veiculos() {
     const [dialog, setDialog] = useState(false)
     const [delete_dialog, setDeleteDialog] = useState(false)
     const [delete_id, setDeleteID] = useState("")
+    const [valid, setValid] = useState(false)
     const [loading, setLoading] = useState(false)
     const [adicionarVeiculo, setAdicionarVeiculo] = useState(false)
     const [dados_veiculo, setDadosVeiculo] = useState({
@@ -29,6 +31,12 @@ export default function Veiculos() {
         modelo: "",
         placa: "",
         identificacao: ""
+    })
+    const [inputs_validation, setInputsValidation] = useState({
+        marca: false,
+        modelo: false,
+        placa: false,
+        identificacao: false,
     })
 
     const { data: session, status } = useSession()
@@ -44,12 +52,12 @@ export default function Veiculos() {
 
     useEffect(() => {
         setLoading()
-        if (status === "authenticated"){
+        if (status === "authenticated") {
             setEmpresa(session?.user.empresa[0].id)
             setLoading(false)
         }
-        
-    },[status])
+
+    }, [status])
 
     useEffect(() => {
         setLoading(true)
@@ -78,6 +86,32 @@ export default function Veiculos() {
         })
     }
 
+    useEffect(() => {
+        if (dialog) {
+            if (adicionarVeiculo) {
+                setInputsValidation({
+                    marca: false,
+                    modelo: false,
+                    placa: false,
+                    identificacao: false,
+                })
+            }
+            else {
+                setInputsValidation({
+                    marca: true,
+                    modelo: true,
+                    placa: true,
+                    identificacao: true,
+                })
+            }
+        }
+        else {
+            setInputsValidation({})
+        }
+
+
+    }, [dialog])
+
     function novoVeiculo() {
         limparDadosVeiculo()
         setAdicionarVeiculo(true)
@@ -85,56 +119,62 @@ export default function Veiculos() {
     }
 
     async function submitNovo() {
-        setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addveiculo"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                empresaid: empresa,
-                marca: dados_veiculo.marca,
-                modelo: dados_veiculo.modelo,
-                placa: dados_veiculo.placa,
-                identificacao: dados_veiculo.identificacao,
+        if (valid) {
+            setLoading(true)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addveiculo"}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    empresaid: empresa,
+                    marca: dados_veiculo.marca,
+                    modelo: dados_veiculo.modelo,
+                    placa: dados_veiculo.placa,
+                    identificacao: dados_veiculo.identificacao,
 
-            }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const result = await res.json();
-        setLoading(false)
+                }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const result = await res.json();
+            setLoading(false)
 
-        if (result == "sucesso") {
-            alert("Veiculo adicionado com sucesso!")
-            location.reload()
+            if (result == "sucesso") {
+                alert("Veiculo adicionado com sucesso!")
+                location.reload()
+            }
+            else {
+                alert("Foram encontrados os seguintes erros: " + result)
+                location.reload()
+            }
         }
-        else {
-            alert("Foram encontrados os seguintes erros: " + result)
-            location.reload()
-        }
+
     }
 
     async function submitAlteracao() {
-        setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedadosveiculo"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                id: dados_veiculo.id,
-                marca: dados_veiculo.marca,
-                modelo: dados_veiculo.modelo,
-                placa: dados_veiculo.placa,
-                identificacao: dados_veiculo.identificacao,
-            }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const result = await res.json();
-        setLoading(false)
+        if (valid) {
+            setLoading(true)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/updatedadosveiculo"}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: dados_veiculo.id,
+                    marca: dados_veiculo.marca,
+                    modelo: dados_veiculo.modelo,
+                    placa: dados_veiculo.placa,
+                    identificacao: dados_veiculo.identificacao,
+                }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const result = await res.json();
+            setLoading(false)
 
-        if (result == "sucesso") {
-            alert("Veiculo atualizado com sucesso!")
-            location.reload()
+            if (result == "sucesso") {
+                alert("Veiculo atualizado com sucesso!")
+                location.reload()
+            }
+            else {
+                alert("Houve algum erro!")
+                location.reload()
+            }
         }
-        else {
-            alert("Houve algum erro!")
-            location.reload()
-        }
+
     }
 
     async function submitDelete(id) {
@@ -181,6 +221,13 @@ export default function Veiculos() {
 
     }
 
+    function validateInputChange(nome_input, isValid) {
+        setInputsValidation({ ...inputs_validation, [nome_input]: isValid })
+    }
+
+    useEffect(() => {
+        setValid(validateAllInputs(inputs_validation))
+    }, [inputs_validation])
 
     return (
         <div className="flex flex-row">
@@ -201,7 +248,7 @@ export default function Veiculos() {
                                         {session?.user?.empresa.map((e, index) => {
                                             let aux = e.numero + " - " + e.nome
                                             return (
-                                                <Select.Item key={index+aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
+                                                <Select.Item key={index + aux} className="hover:bg-emerald-600 hover:text-black p-2 rounded-sm outline-none cursor-default" value={e.id}>
                                                     <Select.ItemText>{aux}</Select.ItemText>
                                                 </Select.Item>
                                             )
@@ -242,7 +289,7 @@ export default function Veiculos() {
                                         <td>{e.placa}</td>
                                         <td>{e.identificacao}</td>
                                         <td>{<Button onClick={() => { getVeiculoInfo(e.id) }} css="my-1" icon={<Pencil size={20} />} />}</td>
-                                        <td>{<Button onClick={() => {setDeleteDialog(true), setDeleteID(e.id)}} icon={<Trash size={20} />} />}</td>
+                                        <td>{<Button onClick={() => { setDeleteDialog(true), setDeleteID(e.id) }} icon={<Trash size={20} />} />}</td>
                                     </tr>
                                 )
                             })}
@@ -265,27 +312,27 @@ export default function Veiculos() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Marca:</span>
-                                    <InputAlt value={dados_veiculo.marca} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, marca: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("marca", isValid)} value={dados_veiculo.marca} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, marca: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Modelo:</span>
-                                    <InputAlt value={dados_veiculo.modelo} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, modelo: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("modelo", isValid)} value={dados_veiculo.modelo} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, modelo: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Placa:</span>
-                                    <InputAlt value={dados_veiculo.placa} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, placa: e.target.value })} />
+                                    <RequiredInput mask="*******" maskChar="" onValidateChange={(isValid) => validateInputChange("placa", isValid)} value={dados_veiculo.placa} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, placa: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Identificação:</span>
-                                    <InputAlt value={dados_veiculo.identificacao} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, identificacao: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("identificacao", isValid)} value={dados_veiculo.identificacao} onChange={(e) => setDadosVeiculo({ ...dados_veiculo, identificacao: e.target.value })} />
                                 </div>
 
 
                                 <div className="justify-self-end">
-                                    <Button onClick={submitEnviar} type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                    <Button onClick={submitEnviar} type="button" texto="Enviar" icon={valid ? <PaperPlaneTilt size={24} /> : <LockSimple size={24} />} />
                                 </div>
 
                             </div>
@@ -303,7 +350,7 @@ export default function Veiculos() {
                         <AlertDialog.Description className='font-semibold text-gray-300 pt-5'>Essa ação irá excluir o veiculo selecionado da base de dados assim como todas as marcações vinculadas a ele.</AlertDialog.Description>
                         <div className='flex pt-10 justify-end gap-5'>
                             <AlertDialog.Cancel>
-                                <CancelButton  texto="Cancelar" icon={<X size={32} />} />
+                                <CancelButton texto="Cancelar" icon={<X size={32} />} />
                             </AlertDialog.Cancel>
                             <AlertDialog.Action>
                                 <AlertButton onClick={submitDelete} texto="Confirmar" icon={<Check size={32} />} />

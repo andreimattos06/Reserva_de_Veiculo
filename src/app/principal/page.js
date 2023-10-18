@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
 import { redirect } from 'next/navigation'
 import InputMask from 'react-input-mask';
-import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple, User, AirplaneTakeoff, AirplaneLanding, CarProfile, MapPin } from '@phosphor-icons/react'
+import { MagnifyingGlass, PaperPlaneTilt, Car, PencilSimple, User, AirplaneTakeoff, AirplaneLanding, CarProfile, MapPin, LockSimple } from '@phosphor-icons/react'
 import * as Dialog from '@radix-ui/react-dialog';
 import InputAlt from '../components/inputalt.js';
 import * as Select from '@radix-ui/react-select';
@@ -15,6 +15,10 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import Loading from '../components/loading.js'
 import { dateToLocalDate } from '../util/datetolocaldate.js';
 import { hourValidate } from '../util/hourvalidate.js';
+import RequiredInput from "../components/requiredinput.js";
+import { validateAllInputs } from "../util/validateallinputs.js";
+import HourInput from '../components/hourinput.js';
+import DateInput from '../components/dateinput.js'
 
 
 export default function Principal() {
@@ -27,12 +31,13 @@ export default function Principal() {
     const [dia, setDia] = useState()
     const [loading, setLoading] = useState(false)
     const [edit, setEdit] = useState(true)
-    const [open_toast, setOpenToast] = useState(false)
     const [ano, setAno] = useState(new Date().getFullYear())
     const [mes, setMes] = useState(new Date().getMonth() + 1)
     const [dialog, setDialog] = useState(false)
     const [dialog_marcacoes, setDialogMarcacoes] = useState(false)
     const [empresa, setEmpresa] = useState("")
+    const [valid, setValid] = useState(false)
+    const [valid_send, setValidSent] = useState(false)
     const [marcacoes_dia, setMarcacoesDia] = useState([])
     const [veiculo, setVeiculo] = useState()
     const [lista_veiculos, setListaVeiculos] = useState([])
@@ -48,6 +53,7 @@ export default function Principal() {
         veiculo: "",
         observacao: "",
     })
+    const [inputs_validation, setInputsValidation] = useState({})
 
     function clearNovaMarcacao() {
         setNovaMarcacao({
@@ -97,6 +103,16 @@ export default function Principal() {
 
     }, [primeiro_dia])
 
+    useEffect(() => {
+        if (valid && veiculo) {
+            setValidSent(true)
+        }
+        else {
+            setValidSent(false)
+        }
+
+    }, [veiculo])
+
 
     function onChangeMes(mes) {
         if (mes < 1 || mes > 12) {
@@ -122,47 +138,50 @@ export default function Principal() {
     }
 
     async function getVeiculosDisponiveis() {
-        setEdit(false)
-        setLoading(true)
+        if (valid) {
+            setEdit(false)
+            setLoading(true)
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
-            method: 'POST',
-            body: JSON.stringify({ empresaid: empresa }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const veiculos = await res.json();
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getveiculos"}`, {
+                method: 'POST',
+                body: JSON.stringify({ empresaid: empresa }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const veiculos = await res.json();
 
-        const res2 = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getcarrosindisponiveis"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                empresa: empresa,
-                ultimodia: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno[0], nova_marcacao.hora_retorno[1], ":", nova_marcacao.hora_retorno[3], nova_marcacao.hora_retorno[4], ":00", ".000Z")),
-                primeirodia: new Date("".concat(ano, "-", mes, "-", dia, "T", nova_marcacao.hora_partida[0], nova_marcacao.hora_partida[1], ":", nova_marcacao.hora_partida[3], nova_marcacao.hora_partida[4], ":00", ".000Z")),
-            }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const veiculos_indisponiveis = await res2.json();
+            const res2 = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/getcarrosindisponiveis"}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    empresa: empresa,
+                    ultimodia: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno[0], nova_marcacao.hora_retorno[1], ":", nova_marcacao.hora_retorno[3], nova_marcacao.hora_retorno[4], ":00", ".000Z")),
+                    primeirodia: new Date("".concat(ano, "-", mes, "-", dia, "T", nova_marcacao.hora_partida[0], nova_marcacao.hora_partida[1], ":", nova_marcacao.hora_partida[3], nova_marcacao.hora_partida[4], ":00", ".000Z")),
+                }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const veiculos_indisponiveis = await res2.json();
 
 
-        let array = veiculos.filter(e => {
-            e.indisponivel = false
-            for (let i = 0; i < veiculos_indisponiveis.length; i++) {
-                if (e.id == veiculos_indisponiveis[i].carro.id) {
-                    e.indisponivel = true
+            let array = veiculos.filter(e => {
+                e.indisponivel = false
+                for (let i = 0; i < veiculos_indisponiveis.length; i++) {
+                    if (e.id == veiculos_indisponiveis[i].carro.id) {
+                        e.indisponivel = true
+                    }
                 }
-            }
-            if (!e.indisponivel) {
-                return e
-            }
-        })
-        setLoading(false)
+                if (!e.indisponivel) {
+                    return e
+                }
+            })
+            setLoading(false)
 
-        if (array.length > 0) {
-            setListaVeiculos(array)
-            setVeiculo(array[0].id)
-        }
-        else {
-            alert("Nenhum carros disponível.")
+            if (array.length > 0) {
+                setListaVeiculos(array)
+                setVeiculo(array[0].id)
+            }
+            else {
+                alert("Nenhum carros disponível.")
+            }
+
         }
 
     }
@@ -214,32 +233,44 @@ export default function Principal() {
     }
 
     async function newMarcacao() {
-        setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addmarcacao"}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                destino: nova_marcacao.destino,
-                observacao: nova_marcacao.observacao,
-                data_partida: new Date("".concat(ano, "-", mes, '-', nova_marcacao.data_partida.slice(0, 2), "T", nova_marcacao.hora_partida.slice(0, 2), ":", nova_marcacao.hora_partida.slice(3, 5), ":00.000Z")),
-                data_retorno: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno.slice(0, 2), ":", nova_marcacao.hora_retorno.slice(3, 5), ":00.000Z")),
-                veiculo: veiculo,
-                email: session?.user.email,
-                empresa: empresa,
-            }),
-            headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
-        })
-        const result = await res.json();
-        setLoading(false)
-        if (result == "sucesso") {
-            alert("Marcação criada com sucesso.")
-            clearNovaMarcacao()
-            setDialog(false)
+        if (valid_send) {
+            setLoading(true)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/addmarcacao"}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    destino: nova_marcacao.destino,
+                    observacao: nova_marcacao.observacao,
+                    data_partida: new Date("".concat(ano, "-", mes, '-', nova_marcacao.data_partida.slice(0, 2), "T", nova_marcacao.hora_partida.slice(0, 2), ":", nova_marcacao.hora_partida.slice(3, 5), ":00.000Z")),
+                    data_retorno: new Date("".concat(nova_marcacao.data_retorno.slice(6, 10), "-", nova_marcacao.data_retorno.slice(3, 5), "-", nova_marcacao.data_retorno.slice(0, 2), "T", nova_marcacao.hora_retorno.slice(0, 2), ":", nova_marcacao.hora_retorno.slice(3, 5), ":00.000Z")),
+                    veiculo: veiculo,
+                    email: session?.user.email,
+                    empresa: empresa,
+                }),
+                headers: { "Content-Type": "application/json", "authorization": session?.user?.token }
+            })
+            const result = await res.json();
+            setLoading(false)
+            if (result == "sucesso") {
+                alert("Marcação criada com sucesso.")
+                clearNovaMarcacao()
+                setDialog(false)
 
+            }
+            else {
+                alert("Houve um erro.")
+            }
         }
-        else {
-            alert("Houve um erro.")
-        }
+
     }
+
+    function validateInputChange(nome_input, isValid) {
+        setInputsValidation({ ...inputs_validation, [nome_input]: isValid })
+    }
+
+    useEffect(() => {
+        setValid(validateAllInputs(inputs_validation))
+    }, [inputs_validation])
+
     return (
         <>
             <div className="flex flex-row">
@@ -310,22 +341,22 @@ export default function Principal() {
 
                                 <div className="grid grid-cols-1">
                                     <span>Destino:</span>
-                                    <InputAlt placeholder="Cristalina - GO" value={nova_marcacao.destino} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, destino: e.target.value })} />
+                                    <RequiredInput onValidateChange={(isValid) => validateInputChange("destino", isValid)} placeholder="Cristalina - GO" value={nova_marcacao.destino} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, destino: e.target.value })} />
                                 </div>
 
                                 <div className="grid grid-cols-2">
                                     <span>Data e Hora da Partida:</span>
                                     <div />
-                                    <InputAlt css=" text-gray-500" mask="99/99/9999" maskChar=" " disabled value={nova_marcacao.data_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_partida: e.target.value })} />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar="0" placeholder="08:00" value={nova_marcacao.hora_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_partida: hourValidate(e.target.value) })} />
+                                    <DateInput onValidateChange={() => validateInputChange("data_partida", true)} css={!edit ? "text-gray-600 disabled" : "disabled disabled:text-gray-300"} mask="99/99/9999" maskChar="" disabled value={nova_marcacao.data_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_partida: e.target.value })} />
+                                    <HourInput onValidateChange={(isValid) => validateInputChange("hora_partida", isValid)} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder="08:00" value={nova_marcacao.hora_partida} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_partida: hourValidate(e.target.value) })} />
 
                                 </div>
 
                                 <div className="grid grid-cols-2">
                                     <span>Data e Hora do Retorno:</span>
                                     <div />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99/99/9999" maskChar="0" placeholder="01/01/2023" value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
-                                    <InputAlt disabled={!edit} css={!edit ? " text-gray-500" : ""} mask="99:99" maskChar="0" placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: hourValidate(e.target.value) })} />
+                                    <DateInput onValidateChange={(isValid) => validateInputChange("data_retorno", isValid)} data_ref={nova_marcacao.data_partida} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder={nova_marcacao.data_partida} value={nova_marcacao.data_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, data_retorno: e.target.value })} />
+                                    <HourInput onValidateChange={(isValid) => validateInputChange("hora_retorno", isValid)} disabled={!edit} css={!edit ? " text-gray-600" : ""} maskChar="" placeholder="08:00" value={nova_marcacao.hora_retorno} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, hora_retorno: hourValidate(e.target.value) })} />
                                 </div>
 
                                 <div className='flex'>
@@ -367,18 +398,18 @@ export default function Principal() {
                                     {(lista_veiculos.length > 0) ?
                                         <Button type="button" onClick={editNovaMarcacao} icon={<PencilSimple size={24} />} />
                                         :
-                                        <Button type="button" onClick={getVeiculosDisponiveis} icon={<MagnifyingGlass size={30} />} texto="Verificar Disponibilidade dos Veículos" />
+                                        <Button type="button" onClick={getVeiculosDisponiveis} icon={valid ? <MagnifyingGlass size={30} /> : <LockSimple size={30} />} texto="Verificar Disponibilidade dos Veículos" />
                                     }
 
                                 </div>
 
                                 <div className="grid grid-cols-1">
                                     <span>Observacao:</span>
-                                    <InputAlt placeholder="Deslocamento para treinamento" value={nova_marcacao.observacao} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, observacao: e.target.value })} />
+                                    <RequiredInput onValidateChange={() => validateInputChange("observacao", true)} placeholder="Deslocamento para treinamento" value={nova_marcacao.observacao} onChange={(e) => setNovaMarcacao({ ...nova_marcacao, observacao: e.target.value })} />
                                 </div>
 
                                 <div className="justify-self-end">
-                                    <Button onClick={newMarcacao} type="button" texto="Enviar" icon={<PaperPlaneTilt size={24} />} />
+                                    <Button onClick={newMarcacao} type="button" texto="Enviar" icon={valid_send ? <PaperPlaneTilt size={24} /> : <LockSimple size={24} />} />
                                 </div>
 
                             </div>
