@@ -279,7 +279,7 @@ export default function Principal() {
 
     return (
         <>
-            <div className="flex flex-row">
+            <div className="flex flex-row max-h-screen">
                 <Sidebar />
                 <div className='flex flex-col my-16 mx-16 w-4/5 gap-10'>
                     <div className='flex w-full items-center justify-between'>

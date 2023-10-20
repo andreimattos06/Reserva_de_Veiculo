@@ -14,15 +14,23 @@ export default function DateInput(props) {
 
     function validate() {
         let valido = false
-        let ano = props?.value.slice(6,10)
-        let mes = props?.value.slice(3,5)
-        let dia = props?.value.slice(0,2)
-        let data_valida = isValidDate(ano, mes-1,dia)
+        let data_retorno = {
+            ano: props?.value.slice(6,10),
+            mes: props?.value.slice(3,5),
+            dia: props?.value.slice(0,2),
+        }
+        let data_partida = {
+            ano: props?.data_ref.slice(6,10),
+            mes: props?.data_ref.slice(3,5),
+            dia: props?.data_ref.slice(0,2),
+        }
+
+        let data_valida = isValidDate(data_retorno.ano, data_retorno.mes-1,data_retorno.dia)
         if (props.value.length < 10 || !data_valida) {
             valido = false
             setErro("Data Inválida!")
         }
-        else if (props?.data_ref > props?.value){
+        else if (new Date(data_partida.ano, data_partida.mes-1, data_partida.dia) > new Date(data_retorno.ano, data_retorno.mes-1, data_retorno.dia)){
             valido = false
             setErro("A data de retorno não pode ser menor que a data de partida!")
         }

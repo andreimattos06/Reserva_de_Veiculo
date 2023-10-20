@@ -6,13 +6,12 @@ import { useSession } from "next-auth/react"
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import Button from "../components/button.js";
-import { Plus, Pencil, Trash, PaperPlaneTilt, Check, X } from '@phosphor-icons/react'
+import { Plus, Trash, Check, X } from '@phosphor-icons/react'
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import AlertButton from '../components/alertbutton.js'
 import CancelButton from '../components/cancelbutton.js'
 import Loading from '../components/loading.js';
 import { dateToLocalDate } from '../util/datetolocaldate.js';
-import { Suspense } from 'react'
 
 export default function MinhasMarcacoes() {
     const [empresa, setEmpresa] = useState("")
@@ -53,10 +52,10 @@ export default function MinhasMarcacoes() {
         getData()
 
     }, [empresa])
-
+    console.log(delete_id)
     async function submitDelete(id) {
         setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/deleteveiculo"}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_FETCH_URL + "/deletereserva"}`, {
             method: 'POST',
             body: JSON.stringify({
                 id: delete_id,
@@ -67,7 +66,7 @@ export default function MinhasMarcacoes() {
         setLoading(false)
 
         if (result == "sucesso") {
-            alert("Veiculo excluído com sucesso!")
+            alert("Reserva excluída com sucesso!")
             location.reload()
         }
         else {
@@ -156,7 +155,7 @@ export default function MinhasMarcacoes() {
                     <AlertDialog.Overlay className='fixed inset-0 bg-black opacity-80' />
                     <AlertDialog.Content className='px-5 py-5 text-white w-2/6 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-black border-2 border-emerald-600 rounded-md'>
                         <AlertDialog.Title className='font-bold text-3xl'> Você tem certeza?</AlertDialog.Title>
-                        <AlertDialog.Description className='font-semibold text-gray-300 pt-5'>Essa ação irá excluir o veiculo selecionado da base de dados assim como todas as marcações vinculadas a ele.</AlertDialog.Description>
+                        <AlertDialog.Description className='font-semibold text-gray-300 pt-5'>Essa ação irá excluir a reserva selecionada.</AlertDialog.Description>
                         <div className='flex pt-10 justify-end gap-5'>
                             <AlertDialog.Cancel>
                                 <CancelButton texto="Cancelar" icon={<X size={32} />} />
