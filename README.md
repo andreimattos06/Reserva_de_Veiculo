@@ -6,8 +6,8 @@ Frontend developed using Next.js.
 
 Technologies used:
 
-*Tailwind CSS
-*Next Auth
+* Tailwind CSS
+* Next Auth
 
 
 
@@ -43,8 +43,8 @@ Sistema Web desenvolvido com o intuito de facilitar o processo de reserva de um 
 Frontend desenvolvido utilizando Next.js.
 
 Tecnologias utilizadas:
-Tailwind CSS
-Next Auth
+* Tailwind CSS
+* Next Auth
 
 
 Funcionalidades implementadas:
