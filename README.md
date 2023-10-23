@@ -13,23 +13,23 @@ Technologies used:
 
 Implemented features:
 
-*Login/Logout
-*Session control (Next Auth)
-*Conditional rendering based on the user's access level.
-*Vehicle registration and management
-*User registration and maintenance
-*Account data maintenance (own)
-*Password change
-*Reservation creation
-*Viewing reservations
+* Login/Logout
+* Session control (Next Auth)
+* Conditional rendering based on the user's access level.
+* Vehicle registration and management
+* User registration and maintenance
+* Account data maintenance (own)
+* Password change
+* Reservation creation
+* Viewing reservations
 
 
 
 Features to be implemented:
 
-*Responsive design
-*Reservation maintenance
-*Reservation tips (people going to the same destination on the same day or, in case no vehicles are available, suggesting some alternative dates).
+* Responsive design
+* Reservation maintenance
+* Reservation tips (people going to the same destination on the same day or, in case no vehicles are available, suggesting some alternative dates).
 
 
 
