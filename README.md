@@ -1,34 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Web system developed with the objective of facilitating the vehicle reservation process. In some companies, vehicles are shared, which creates a significant challenge when making reservations without causing scheduling conflicts.
 
-## Getting Started
 
-First, run the development server:
+Frontend developed using Next.js.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Technologies used:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+*Tailwind CSS
+*Next Auth
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Implemented features:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+*Login/Logout
+*Session control (Next Auth)
+*Conditional rendering based on the user's access level.
+*Vehicle registration and management
+*User registration and maintenance
+*Account data maintenance (own)
+*Password change
+*Reservation creation
+*Viewing reservations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Features to be implemented:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+*Responsive design
+*Reservation maintenance
+*Reservation tips (people going to the same destination on the same day or, in case no vehicles are available, suggesting some alternative dates).
+
+
+
+Backend: https://github.com/andreimattos06/Reserva_veiculo_server
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Sistema Web desenvolvido com o intuito de facilitar o processo de reserva de um veículo. Em algumas empresas os veículos são compartilhados o que gera uma grande dificuldade no momento de fazer a reserva sem que gere conflitos de agenda.
+
+Frontend desenvolvido utilizando Next.js.
+
+Tecnologias utilizadas:
+Tailwind CSS
+Next Auth
+
+
+Funcionalidades implementadas:
+* Login/Logout
+* Controle de Sessão (Next Auth)
+* Renderização condicional de acordo com o nível de acesso do usuário.
+* Cadastro e Administração de Veículos
+* Cadastro e Manutenção de Usuários
+* Manutenção dos dados da conta (própios)
+* Alteração da senha
+* Criação de Reservas
+* Visualização de reservas
+
+Funcionalidade a serem implementadas:
+* Design responsivo
+* Manutenção das reservas
+* Dicas de reservas (pessoas que irão para o mesmo destino no mesmo dia ou no caso de nenhum veículo estar disponível retornar algumas datas como sugestão).
+
+
+
+Backend: https://github.com/andreimattos06/Reserva_veiculo_server
